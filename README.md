@@ -12,5 +12,5 @@ Then just use the  `start.sh` script  from the `dev/` directory<br/>
 sh start.sh
 ```
 
-Api will be available under the following [URL](http://localhost:8080)
+Api will be available under the following [URL](http://localhost:8080/swagger-ui/index.html#/)
 
