@@ -1,6 +1,7 @@
 package com.loess.geosurveymap.location
 
 import com.loess.geosurveymap.auditable.Auditable
+import com.loess.geosurveymap.survey.SurveyEntity
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy
 import org.locationtech.jts.geom.Point;
@@ -14,8 +15,11 @@ class LocationEntity(
     val id: Long = 0,
 
     @Column(columnDefinition = "geometry(Point,4326)")
-    val location: Point
+    val location: Point,
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    val survey: SurveyEntity
 ) : Auditable() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -36,7 +40,7 @@ class LocationEntity(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , location = $location )"
+        return this::class.simpleName + "(id = $id , location = $location , survey = $survey )"
     }
 
 

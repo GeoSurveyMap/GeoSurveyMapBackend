@@ -57,13 +57,7 @@ dependencies {
     testRuntimeOnly("com.h2database:h2")
 }
 
-configure(allprojects.filter {
-    it.path !in setOf(
-        ":modules",
-        ":modules:mobile-frontend",
-        ":modules:service-modules",
-    )
-}) {
+allprojects {
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.plugin.spring")
@@ -98,15 +92,4 @@ configure(allprojects.filter {
             jvmTarget = JavaVersion.VERSION_21.toString()
         }
     }
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "21"
-    }
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
