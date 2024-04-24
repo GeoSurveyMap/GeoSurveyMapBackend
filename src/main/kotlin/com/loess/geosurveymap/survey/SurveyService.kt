@@ -1,5 +1,6 @@
 package com.loess.geosurveymap.survey
 
+import com.loess.geosurveymap.location.LocationRequest
 import com.loess.geosurveymap.location.LocationService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,5 +18,16 @@ class SurveyService(
 
         return survey.toResponse()
     }
+
+    @Transactional(readOnly = true)
+    fun getAllSurveys(): List<Survey> = surveyRepository.findAll().map { it.toResponse() }
+
+    @Transactional(readOnly = true)
+    fun getSurveyByLocation(locationRequest: LocationRequest): Survey =
+        locationService.getLocationByCoordinates(locationRequest).survey
+
+    @Transactional(readOnly = true)
+    fun getAllSurveysWithinRadius(locationRequest: LocationRequest, radius: Double): List<Survey> =
+        locationService.getAllWithinRadius(locationRequest, radius).map { it.survey }
 
 }

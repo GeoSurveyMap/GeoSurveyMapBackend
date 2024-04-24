@@ -1,7 +1,9 @@
 spring:
   application:
     name: geosurveymap
-
+  threads:
+    virtual:
+      enabled: true
 logging:
   level:
     org.springframework.security: DEBUG

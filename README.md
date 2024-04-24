@@ -1,5 +1,10 @@
 # Getting Started
 
+### Prerequisites
+
+- java 21
+- docker
+
 ### How to use the application?
 Before running the application, set the executable mode for the `wait-for-it.sh` file  from the following directory
 `dev/docker/`<br/>
