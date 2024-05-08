@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 PROJECT_NAME=geosurveymap
 SCRIPT_DIR=$(cd $(dirname $0) && pwd)
 PROJECT_DIR="$(cd "$(dirname $0)/.." && pwd)"
@@ -10,6 +11,9 @@ VERSION=$(grep "set(\"geoSurveyMapVersion\", " $PROJECT_DIR/build.gradle.kts | g
 echo "GeoSurveyMap Version: $VERSION"
 
 COMPOSE_FILE="$DOCKER_COMPOSE_DIR/compose-dev.yml"
+
+cd $PROJECT_DIR
+gradlew clean build -x &&
 
 docker-compose -p $PROJECT_DIR -f $COMPOSE_FILE down geosurveymap-backend postgres &&
 cd $PROJECT_DIR

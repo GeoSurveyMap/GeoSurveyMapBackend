@@ -3,7 +3,7 @@
 ### Prerequisites
 
 - java 21
-- docker
+- running docker
 
 ### How to use the application?
 Before running the application, set the executable mode for the `wait-for-it.sh` file  from the following directory
@@ -12,7 +12,7 @@ Before running the application, set the executable mode for the `wait-for-it.sh`
 chmod +x wait-for-it.sh
 ```
 
-Then just use the  `start.sh` script  from the `dev/` directory<br/>
+Then just use the `start.sh` script  from the `dev/` directory<br/>
 ```shell
 sh start.sh
 ```
