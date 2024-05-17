@@ -2,7 +2,7 @@
 
 ### Prerequisites
 
-- java 21
+- installed java 21
 - running docker
 
 ### How to use the application?

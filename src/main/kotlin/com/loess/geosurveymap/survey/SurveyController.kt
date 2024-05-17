@@ -2,9 +2,16 @@ package com.loess.geosurveymap.survey
 
 import com.loess.geosurveymap.apiutils.ApiRequestHandler
 import com.loess.geosurveymap.apiutils.dto.ApiResponse
+import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.location.LocationRequest
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.*
+
+data class CoordinatesRequest(
+    val lat: Double,
+    val lng: Double,
+    val radius: Double? = null
+)
 
 @RestController
 @RequestMapping("/api/v1/survey")
@@ -28,21 +35,30 @@ class SurveyController(
         }
 
     @Operation(summary = "Get survey by location")
-    @GetMapping("/x/{x}/y/{y}")
-    fun getSurveyByLocation(@PathVariable x: Double, @PathVariable y: Double): ApiResponse<Survey> =
+    @GetMapping
+    fun getSurveyByLocation(@RequestBody coordinatesRequest: CoordinatesRequest): ApiResponse<Survey> =
         apiRequestHandler.handle {
-            surveyService.getSurveyByLocation(LocationRequest(x, y))
+            with(coordinatesRequest) {
+                surveyService.getSurveyByLocation(LocationRequest(lat, lng))
+            }
         }
 
     @Operation(summary = "Get all surveys withing given radius in meters")
-    @GetMapping("/x/{x}/y/{y}/radius/{radius}")
-    fun getAllSurveysWithinRadius(
-        @PathVariable x: Double,
-        @PathVariable y: Double,
-        @PathVariable radius: Double
-    ): ApiResponse<List<Survey>> =
+    @GetMapping("/within-radius")
+    fun getAllSurveysWithinRadius(@RequestBody coordinatesRequest: CoordinatesRequest): ApiResponse<List<Survey>> =
         apiRequestHandler.handle {
-            surveyService.getAllSurveysWithinRadius(LocationRequest(x, y), radius)
+            with(coordinatesRequest) {
+                radius?.let {
+                    surveyService.getAllSurveysWithinRadius(LocationRequest(lng, lat), radius)
+                } ?: throw IllegalArgumentException("Radius must be not be null")
+            }
+        }
+
+    @Operation(summary = "Get all surveys withing given bounding box")
+    @GetMapping("/bounding-box")
+    fun getAllSurveysWithinRadius(@RequestBody boundingBox: BoundingBox): ApiResponse<List<Survey>> =
+        apiRequestHandler.handle {
+            surveyService.getAllSurveysWithinBoundingBox(boundingBox)
         }
 
 }

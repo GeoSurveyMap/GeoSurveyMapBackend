@@ -1,5 +1,6 @@
 package com.loess.geosurveymap.survey
 
+import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.location.LocationRequest
 import com.loess.geosurveymap.location.LocationService
 import org.springframework.stereotype.Service
@@ -29,5 +30,9 @@ class SurveyService(
     @Transactional(readOnly = true)
     fun getAllSurveysWithinRadius(locationRequest: LocationRequest, radius: Double): List<Survey> =
         locationService.getAllWithinRadius(locationRequest, radius).map { it.survey }
+
+    @Transactional(readOnly = true)
+    fun getAllSurveysWithinBoundingBox(boundingBox: BoundingBox): List<Survey> =
+        locationService.getAllWithinBoundingBox(boundingBox).map { it.survey }
 
 }

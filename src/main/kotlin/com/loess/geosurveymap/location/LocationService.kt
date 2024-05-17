@@ -1,5 +1,6 @@
 package com.loess.geosurveymap.location
 
+import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.exceptions.NotFoundException
 import com.loess.geosurveymap.survey.SurveyEntity
 import org.locationtech.jts.geom.Coordinate
@@ -34,8 +35,14 @@ class LocationService(
     @Transactional(readOnly = true)
     fun getAllWithinRadius(locationRequest: LocationRequest, radius: Double): List<Location> {
         with(locationRequest) {
-            val point = geometryFactory.createPoint(Coordinate(x, y))
             return locationRepository.findAllWithinRadius(x, y, radius).map { it.toResponse() }
+        }
+    }
+
+    @Transactional(readOnly = true)
+    fun getAllWithinBoundingBox(boundingBox: BoundingBox): List<Location> {
+        with(boundingBox) {
+            return locationRepository.findAllWithinBoundingBox(minX, minY, maxX, maxY).map { it.toResponse() }
         }
     }
 }

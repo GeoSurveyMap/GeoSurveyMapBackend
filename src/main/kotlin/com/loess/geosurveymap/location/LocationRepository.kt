@@ -27,4 +27,22 @@ interface LocationRepository : JpaRepository<LocationEntity, Long> {
         @Param("y") y: Double,
         @Param("radius") radius: Double // Radius in meters
     ): List<LocationEntity>
+
+    @Query(
+        value = """
+           SELECT *
+           FROM location l
+           WHERE ST_Within(
+             l.location,
+             ST_MakeEnvelope(:minX, :minY, :maxX, :maxY, 4326)
+           )
+        """,
+        nativeQuery = true
+    )
+    fun findAllWithinBoundingBox(
+        @Param("minX") minX: Double,
+        @Param("minY") minY: Double,
+        @Param("maxX") maxX: Double,
+        @Param("maxY") maxY: Double
+    ): List<LocationEntity>
 }
