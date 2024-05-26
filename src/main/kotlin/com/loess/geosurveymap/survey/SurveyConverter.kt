@@ -1,5 +1,7 @@
 package com.loess.geosurveymap.survey
 
+import com.loess.geosurveymap.location.LocationSimple
+
 fun SurveyRequest.toEntity(): SurveyEntity =
     SurveyEntity(
         category = category,
@@ -7,12 +9,13 @@ fun SurveyRequest.toEntity(): SurveyEntity =
         solution = solution
     )
 
-fun SurveyEntity.toResponse(): Survey =
+fun SurveyEntity.toResponse(location: LocationSimple): Survey =
     Survey(
         id = id,
         category = category,
         description = description,
-        solution = solution
+        solution = solution,
+        location = location
     )
 
 fun Survey.toEntity(): SurveyEntity =

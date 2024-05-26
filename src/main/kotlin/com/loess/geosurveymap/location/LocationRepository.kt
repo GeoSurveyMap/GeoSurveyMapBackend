@@ -1,5 +1,6 @@
 package com.loess.geosurveymap.location
 
+import com.loess.geosurveymap.survey.Category
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -8,7 +9,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface LocationRepository : JpaRepository<LocationEntity, Long> {
-    fun findByLocation(location: Point): LocationEntity?
+    fun findByLocation(location: Point): List<LocationEntity>
+    fun findByLocationAndSurvey_CategoryIn(location: Point, categories: List<Category>): List<LocationEntity>
 
     @Query(
         value = """
@@ -30,19 +32,22 @@ interface LocationRepository : JpaRepository<LocationEntity, Long> {
 
     @Query(
         value = """
-           SELECT *
-           FROM location l
-           WHERE ST_Within(
-             l.location,
-             ST_MakeEnvelope(:minX, :minY, :maxX, :maxY, 4326)
-           )
-        """,
+       SELECT l.*
+       FROM location l
+       JOIN public.survey s ON s.id = l.survey_id
+       WHERE ST_Within(
+         l.location,
+         ST_MakeEnvelope(:minX, :minY, :maxX, :maxY, 4326)
+       )
+       AND (:categories IS NULL OR s.category = ANY (string_to_array(:categories, ',')))
+    """,
         nativeQuery = true
     )
     fun findAllWithinBoundingBox(
         @Param("minX") minX: Double,
         @Param("minY") minY: Double,
         @Param("maxX") maxX: Double,
-        @Param("maxY") maxY: Double
+        @Param("maxY") maxY: Double,
+        @Param("categories") categories: String?
     ): List<LocationEntity>
 }

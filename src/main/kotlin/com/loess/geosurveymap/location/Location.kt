@@ -14,3 +14,7 @@ data class LocationRequest(
     val y: Double,
 )
 
+data class LocationSimple(
+    val x: Double,
+    val y: Double,
+)
