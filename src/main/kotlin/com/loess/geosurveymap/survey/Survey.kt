@@ -8,12 +8,14 @@ data class Survey(
     val category: Category,
     val description: String,
     val solution: String,
-    var location: LocationSimple
+    var location: LocationSimple,
+    val affectedArea: Double
 )
 
 data class SurveyRequest(
+    val affectedArea: Double,
     val category: Category,
     val description: String,
     val solution: String,
-    val locationRequest: LocationRequest
+    val locationRequest: LocationRequest,
 )

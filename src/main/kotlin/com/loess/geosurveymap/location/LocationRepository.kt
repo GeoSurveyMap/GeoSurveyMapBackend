@@ -50,4 +50,25 @@ interface LocationRepository : JpaRepository<LocationEntity, Long> {
         @Param("maxY") maxY: Double,
         @Param("categories") categories: String?
     ): List<LocationEntity>
+
+    @Query(
+        value = """
+            SELECT l.* 
+            FROM location l
+            JOIN public.survey s ON s.id = l.survey_id
+            WHERE ST_DWithin(
+                 cast(l.location as geography),
+                 ST_SetSRID(ST_Point(:x, :y), 4326),
+                 :radius
+            )
+            AND s.category = ANY (string_to_array(:categories, ','))
+        """,
+        nativeQuery = true
+    )
+    fun findSurveysByLocationAndCategories(
+        @Param("x") x: Double,
+        @Param("y") y: Double,
+        @Param("radius") radius: Double,
+        @Param("categories") categories: String
+    ): List<LocationEntity>
 }

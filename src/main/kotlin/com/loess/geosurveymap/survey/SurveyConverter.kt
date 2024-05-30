@@ -6,7 +6,8 @@ fun SurveyRequest.toEntity(): SurveyEntity =
     SurveyEntity(
         category = category,
         description = description,
-        solution = solution
+        solution = solution,
+        affectedArea = affectedArea,
     )
 
 fun SurveyEntity.toResponse(location: LocationSimple): Survey =
@@ -15,7 +16,8 @@ fun SurveyEntity.toResponse(location: LocationSimple): Survey =
         category = category,
         description = description,
         solution = solution,
-        location = location
+        location = location,
+        affectedArea = affectedArea,
     )
 
 fun Survey.toEntity(): SurveyEntity =
@@ -23,5 +25,6 @@ fun Survey.toEntity(): SurveyEntity =
         id = id ?: 0,
         category = category,
         description = description,
-        solution = solution
+        solution = solution,
+        affectedArea = affectedArea
     )

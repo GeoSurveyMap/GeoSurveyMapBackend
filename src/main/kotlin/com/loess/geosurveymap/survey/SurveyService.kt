@@ -1,7 +1,7 @@
 package com.loess.geosurveymap.survey
 
 import com.loess.geosurveymap.dto.BoundingBox
-import com.loess.geosurveymap.location.LocationRequest
+import com.loess.geosurveymap.dto.Coordinates
 import com.loess.geosurveymap.location.LocationService
 import com.loess.geosurveymap.location.LocationSimple
 import com.loess.geosurveymap.location.toSimple
@@ -26,13 +26,13 @@ class SurveyService(
     fun getAllSurveys(): List<Survey> = locationService.getAllLocations().map { it.survey }
 
     @Transactional(readOnly = true)
-    fun getSurveysByLocation(locationRequest: LocationRequest): List<Survey> =
+    fun getSurveysByLocation(locationRequest: Coordinates): List<Survey> =
         locationService.getLocationByCoordinates(locationRequest).map { it.survey }
 
     @Transactional(readOnly = true)
-    fun getAllSurveysWithinRadius(locationRequest: LocationRequest, radius: Double): List<Survey> =
+    fun getAllSurveysWithinRadius(locationRequest: Coordinates, radius: Double): List<Survey> =
         locationService.getAllWithinRadius(locationRequest, radius).map {
-            it.survey.location = LocationSimple(it.x, it.y)
+            it.survey.location = LocationSimple(it.x, it.y, it.name)
             it.survey
         }
 
@@ -42,19 +42,14 @@ class SurveyService(
 
     @Transactional(readOnly = true)
     fun getAllSurveysByLocationAndRadiusAndCategories(
-        locationRequest: LocationRequest,
+        locationRequest: Coordinates,
         radius: Double,
         categories: List<Category>
     ): List<Survey> =
-        surveyRepository.findSurveysByLocationAndCategories(
-            locationRequest.x,
-            locationRequest.y,
-            radius,
-            categories.joinToString(",")
-        ).map { it.toResponse(LocationSimple(locationRequest.x, locationRequest.y)) }
+        locationService.getByCategories(locationRequest, radius, categories).map { it.survey }
 
     @Transactional(readOnly = true)
-    fun getSurveysByCategories(locationRequest: LocationRequest, categories: List<Category>): List<Survey> =
+    fun getSurveysByCategories(locationRequest: Coordinates, categories: List<Category>): List<Survey> =
         locationService.getLocationBySurveyCategory(
             locationRequest,
             categories

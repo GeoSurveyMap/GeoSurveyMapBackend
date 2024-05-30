@@ -7,11 +7,13 @@ fun LocationEntity.toResponse(location: LocationSimple): Location =
         id = id,
         x = location.x,
         y = location.y,
-        survey = survey.toResponse(location)
+        survey = survey.toResponse(location),
+        name = name
     )
 
 fun Location.toSimple(): LocationSimple =
     LocationSimple(
         x = x,
         y = y,
+        name = name,
     )

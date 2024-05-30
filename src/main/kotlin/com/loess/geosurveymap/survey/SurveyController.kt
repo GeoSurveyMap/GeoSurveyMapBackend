@@ -3,8 +3,9 @@ package com.loess.geosurveymap.survey
 import com.loess.geosurveymap.apiutils.ApiRequestHandler
 import com.loess.geosurveymap.apiutils.dto.ApiResponse
 import com.loess.geosurveymap.dto.BoundingBox
-import com.loess.geosurveymap.location.LocationRequest
+import com.loess.geosurveymap.dto.Coordinates
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -14,8 +15,11 @@ class SurveyController(
     private val apiRequestHandler: ApiRequestHandler
 ) {
 
-    @Operation(summary = "Create a new survey")
-    @PostMapping
+    @Operation(
+        summary = "Create a new survey",
+        security = [SecurityRequirement(name = "bearerAuth")]
+    )
+    @PostMapping("/create")
     fun createSurvey(@RequestBody surveyRequest: SurveyRequest): ApiResponse<Survey> =
         apiRequestHandler.handle {
             surveyService.saveSurvey(surveyRequest)
@@ -37,13 +41,13 @@ class SurveyController(
         @RequestParam(required = false) categories: List<Category>? = null,
     ): ApiResponse<List<Survey>> =
         apiRequestHandler.handle {
-            val locationRequest = LocationRequest(x, y)
+            val coordinates = Coordinates(x, y)
 
             when {
-                radius != null && categories != null -> surveyService.getAllSurveysByLocationAndRadiusAndCategories(locationRequest, radius, categories)
-                categories != null -> surveyService.getSurveysByCategories(locationRequest, categories)
-                radius != null -> surveyService.getAllSurveysWithinRadius(locationRequest, radius)
-                else -> surveyService.getSurveysByLocation(locationRequest)
+                radius != null && categories != null -> surveyService.getAllSurveysByLocationAndRadiusAndCategories(coordinates, radius, categories)
+                categories != null -> surveyService.getSurveysByCategories(coordinates, categories)
+                radius != null -> surveyService.getAllSurveysWithinRadius(coordinates, radius)
+                else -> surveyService.getSurveysByLocation(coordinates)
             }
         }
 

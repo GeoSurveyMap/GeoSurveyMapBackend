@@ -17,6 +17,7 @@ class SurveyEntity(
     val category: Category,
     val description: String,
     val solution: String,
+    val affectedArea: Double // radius
 ) : Auditable() {
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true

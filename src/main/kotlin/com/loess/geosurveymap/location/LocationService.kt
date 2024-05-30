@@ -1,7 +1,7 @@
 package com.loess.geosurveymap.location
 
 import com.loess.geosurveymap.dto.BoundingBox
-import com.loess.geosurveymap.exceptions.NotFoundException
+import com.loess.geosurveymap.dto.Coordinates
 import com.loess.geosurveymap.survey.Category
 import com.loess.geosurveymap.survey.SurveyEntity
 import org.locationtech.jts.geom.Coordinate
@@ -19,22 +19,23 @@ class LocationService(
     fun saveLocationForSurvey(locationRequest: LocationRequest, surveyEntity: SurveyEntity): Location =
         with(locationRequest) {
             val point = geometryFactory.createPoint(Coordinate(x, y))
-            val locationEntity = LocationEntity(location = point, survey = surveyEntity)
+            val locationEntity = LocationEntity(location = point, survey = surveyEntity, name = name)
 
-            return locationRepository.save(locationEntity).toResponse(LocationSimple(x, y))
+            return locationRepository.save(locationEntity).toResponse(LocationSimple(x, y, name = name))
         }
 
     @Transactional(readOnly = true)
-    fun getLocationByCoordinates(locationRequest: LocationRequest): List<Location> =
+    fun getLocationByCoordinates(locationRequest: Coordinates): List<Location> =
         with(locationRequest) {
             val point = geometryFactory.createPoint(Coordinate(x, y))
-            return locationRepository.findByLocation(point).map { it.toResponse(LocationSimple(x, y)) }
+            return locationRepository.findByLocation(point).map { it.toResponse(LocationSimple(x, y, name = it.name)) }
         }
 
     @Transactional(readOnly = true)
-    fun getAllWithinRadius(locationRequest: LocationRequest, radius: Double): List<Location> {
-        with(locationRequest) {
-            return locationRepository.findAllWithinRadius(x, y, radius).map { it.toResponse(LocationSimple(x, y)) }
+    fun getAllWithinRadius(coordinates: Coordinates, radius: Double): List<Location> {
+        with(coordinates) {
+            return locationRepository.findAllWithinRadius(x, y, radius)
+                .map { it.toResponse(LocationSimple(x, y, name = it.name)) }
         }
     }
 
@@ -42,20 +43,35 @@ class LocationService(
     fun getAllWithinBoundingBox(boundingBox: BoundingBox, categories: List<Category>? = null): List<Location> {
         with(boundingBox) {
             return locationRepository.findAllWithinBoundingBox(minX, minY, maxX, maxY, categories?.joinToString(","))
-                .map { it.toResponse(LocationSimple(it.location.x, it.location.y)) }
+                .map { it.toResponse(LocationSimple(it.location.x, it.location.y, name = it.name)) }
         }
     }
 
     @Transactional(readOnly = true)
     fun getAllLocations(): List<Location> = locationRepository.findAll()
-        .map { it.toResponse(LocationSimple(it.location.x, it.location.y)) }
+        .map { it.toResponse(LocationSimple(it.location.x, it.location.y, name = it.name)) }
 
     @Transactional(readOnly = true)
-    fun getLocationBySurveyCategory(locationRequest: LocationRequest, categories: List<Category>): List<Location> {
-        with(locationRequest) {
+    fun getLocationBySurveyCategory(coordinates: Coordinates, categories: List<Category>): List<Location> {
+        with(coordinates) {
             val point = geometryFactory.createPoint(Coordinate(x, y))
-            return locationRepository.findByLocationAndSurvey_CategoryIn(point, categories).map { it.toResponse(LocationSimple(x, y)) }
+            return locationRepository.findByLocationAndSurvey_CategoryIn(point, categories)
+                .map { it.toResponse(LocationSimple(x, y, name = it.name)) }
         }
+    }
+
+    @Transactional(readOnly = true)
+    fun getByCategories(
+        coordinates: Coordinates,
+        radius: Double,
+        categories: List<Category>
+    ): List<Location> {
+        return locationRepository.findSurveysByLocationAndCategories(
+            coordinates.x,
+            coordinates.y,
+            radius,
+            categories.joinToString(",")
+        ).map { it.toResponse(LocationSimple(it.location.x, it.location.y, it.name)) }
     }
 
 }

@@ -17,6 +17,8 @@ class LocationEntity(
     @Column(columnDefinition = "geometry(Point,4326)")
     val location: Point,
 
+    val name: String,
+
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     val survey: SurveyEntity

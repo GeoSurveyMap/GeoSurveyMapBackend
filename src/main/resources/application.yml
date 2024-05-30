@@ -33,7 +33,13 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://geosurveymapauth.kinde.com/.well-known/jwks
+          issuer-uri: https://geosurveymapauth-development.eu.kinde.com
+          jws-algorithms: RS256
 ---
 spring:
   config:
