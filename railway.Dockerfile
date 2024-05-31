@@ -8,7 +8,7 @@ RUN gradle build --no-daemon
 
 # Package stage
 #
-FROM openjdk:21-jre-slim
+FROM openjdk:21
 COPY --from=build /home/gradle/src/build/libs/geosurveymap-1.0.0.jar /usr/local/lib/app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-Duser.timezone=Europe/Warsaw", "-Dspring.profiles.active=default,dev,secret", "-jar", "/usr/local/lib/app.jar"]
