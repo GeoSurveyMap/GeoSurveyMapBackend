@@ -1,10 +1,13 @@
 #
 # Build stage
 #
-FROM gradle:7.3.3-jdk11 AS build
-COPY --chown=gradle:gradle . /home/gradle/src
-WORKDIR /home/gradle/src
-RUN gradle build --no-daemon
+FROM gradle:8-jdk21 AS build
+COPY src /home/app/src
+COPY build.gradle /home/app
+COPY settings.gradle /home/app
+WORKDIR /home/app
+RUN gradle build
+
 
 # Package stage
 #
