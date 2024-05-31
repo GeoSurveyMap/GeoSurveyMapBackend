@@ -3,8 +3,8 @@
 #
 FROM gradle:8-jdk21 AS build
 COPY src /home/app/src
-COPY build.gradle /home/app
-COPY settings.gradle /home/app
+COPY build.gradle.kts /home/app
+COPY settings.gradle.kts /home/app
 WORKDIR /home/app
 RUN gradle build
 
