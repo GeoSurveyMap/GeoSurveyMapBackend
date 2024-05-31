@@ -27,7 +27,7 @@ fi
 
 echo "Building backend local image..."
 cd $BACKEND_DIR
-docker build --build-arg JAR_FILE=./build/libs/backend-"$VERSION".jar -t local/geosurveymap-backend:lastest -f Dockerfile . &&
+docker build --build-arg JAR_FILE=./build/libs/backend-"$VERSION".jar -t local/geosurveymap-backend:lastest -f dev.Dockerfile . &&
 
 cd $DOCKER_COMPOSE_DIR
 echo "Starting $COMPOSE_FILE..."
