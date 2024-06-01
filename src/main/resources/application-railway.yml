@@ -3,3 +3,6 @@ spring:
     url: jdbc:${DATABASE_PRIVATE_URL}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.spatial.dialect.postgis.PostgisDialect
