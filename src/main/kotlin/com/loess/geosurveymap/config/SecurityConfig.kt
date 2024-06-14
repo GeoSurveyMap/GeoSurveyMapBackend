@@ -48,7 +48,11 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val corsConfiguration = CorsConfiguration()
-        corsConfiguration.allowedOrigins = listOf("https://geosurveymapbackend-production.up.railway.app/", "http://localhost:3000")
+        corsConfiguration.allowedOrigins = listOf(
+            "https://geosurveymapbackend-production.up.railway.app/",
+            "http://localhost:3000",
+            "https://geo-survey-map-web-production.up.railway.app"
+        )
         corsConfiguration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
         corsConfiguration.allowCredentials = true
         corsConfiguration.allowedHeaders = listOf("Authorization", "Cache-Control", "Content-Type", "Set-Cookie")
