@@ -19,3 +19,5 @@ sh start.sh
 
 Api will be available under the following [URL](http://localhost:8080/swagger-ui/index.html#/)
 
+## TODO: apply the docker-compose only
+
