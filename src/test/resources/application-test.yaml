@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:justfortesting
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    generate-ddl: true
+  sql:
+    init:
+      mode: always
+      platform: postgres

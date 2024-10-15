@@ -1,6 +1,7 @@
 package com.loess.geosurveymap.survey
 
 import com.loess.geosurveymap.auditable.Auditable
+import com.loess.geosurveymap.user.UserEntity
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy
 
@@ -17,7 +18,10 @@ class SurveyEntity(
     val category: Category,
     val description: String,
     val solution: String,
-    val affectedArea: Double // radius
+    val affectedArea: Double, // radius
+
+    @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    val user: UserEntity,
 ) : Auditable() {
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -2,6 +2,7 @@ package com.loess.geosurveymap.survey
 
 import com.loess.geosurveymap.apiutils.ApiRequestHandler
 import com.loess.geosurveymap.apiutils.dto.ApiResponse
+import com.loess.geosurveymap.common.IsGivenUser
 import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.dto.Coordinates
 import io.swagger.v3.oas.annotations.Operation
@@ -15,14 +16,15 @@ class SurveyController(
     private val apiRequestHandler: ApiRequestHandler
 ) {
 
-    @Operation(
-        summary = "Create a new survey",
-        security = [SecurityRequirement(name = "bearerAuth")]
-    )
-    @PostMapping("/create")
-    fun createSurvey(@RequestBody surveyRequest: SurveyRequest): ApiResponse<Survey> =
+    @Operation(summary = "Create a new survey", security = [SecurityRequirement(name = "bearerAuth")])
+    @IsGivenUser
+    @PostMapping("/{kindeId}/create")
+    fun createSurvey(
+        @PathVariable kindeId: String,
+        @RequestBody surveyRequest: SurveyRequest
+    ): ApiResponse<Survey> =
         apiRequestHandler.handle {
-            surveyService.saveSurvey(surveyRequest)
+            surveyService.saveSurvey(surveyRequest, kindeId)
         }
 
     @Operation(summary = "Get all existing surveys")

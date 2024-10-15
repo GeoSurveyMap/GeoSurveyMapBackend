@@ -1,12 +1,10 @@
 package com.loess.geosurveymap.apiutils
 import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.JsonMappingException
 import com.loess.geosurveymap.apiutils.dto.ApiResponseErrorElement
 import com.loess.geosurveymap.exceptions.ApiException
 import com.loess.geosurveymap.exceptions.BadRequestException
 import com.loess.geosurveymap.exceptions.ConflictException
 import com.loess.geosurveymap.exceptions.NotFoundException
-import com.mobile.amigoapp.api.utils.getProcessingStart
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
@@ -75,10 +73,6 @@ class RestExceptionHandler(
                 "Bad request. Caused by error [${exception::class.simpleName}]. Presumably something is wrong with the request, if you need help please contact application support."
             )
         }
-
-    private fun JsonMappingException.getSimplePath() =
-        this.path.joinToString(separator = "") { if (it.fieldName != null) ".${it.fieldName}" else "[${it.index}]" }
-            .removePrefix(".")
 
     data class ExceptionHttpMapping(
         val httpStatus: HttpStatus,

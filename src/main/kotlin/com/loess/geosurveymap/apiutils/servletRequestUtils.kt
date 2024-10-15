@@ -1,4 +1,4 @@
-package com.mobile.amigoapp.api.utils
+package com.loess.geosurveymap.apiutils
 
 import jakarta.servlet.ServletRequest
 import java.time.Instant

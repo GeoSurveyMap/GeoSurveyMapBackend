@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 class LocationService(
     private val locationRepository: LocationRepository,
     private val geometryFactory: GeometryFactory,
@@ -24,14 +25,12 @@ class LocationService(
             return locationRepository.save(locationEntity).toResponse(LocationSimple(x, y, name = name))
         }
 
-    @Transactional(readOnly = true)
     fun getLocationByCoordinates(locationRequest: Coordinates): List<Location> =
         with(locationRequest) {
             val point = geometryFactory.createPoint(Coordinate(x, y))
             return locationRepository.findByLocation(point).map { it.toResponse(LocationSimple(x, y, name = it.name)) }
         }
 
-    @Transactional(readOnly = true)
     fun getAllWithinRadius(coordinates: Coordinates, radius: Double): List<Location> {
         with(coordinates) {
             return locationRepository.findAllWithinRadius(x, y, radius)
@@ -39,7 +38,6 @@ class LocationService(
         }
     }
 
-    @Transactional(readOnly = true)
     fun getAllWithinBoundingBox(boundingBox: BoundingBox, categories: List<Category>? = null): List<Location> {
         with(boundingBox) {
             return locationRepository.findAllWithinBoundingBox(minX, minY, maxX, maxY, categories?.joinToString(","))
@@ -47,11 +45,9 @@ class LocationService(
         }
     }
 
-    @Transactional(readOnly = true)
     fun getAllLocations(): List<Location> = locationRepository.findAll()
         .map { it.toResponse(LocationSimple(it.location.x, it.location.y, name = it.name)) }
 
-    @Transactional(readOnly = true)
     fun getLocationBySurveyCategory(coordinates: Coordinates, categories: List<Category>): List<Location> {
         with(coordinates) {
             val point = geometryFactory.createPoint(Coordinate(x, y))
@@ -60,7 +56,6 @@ class LocationService(
         }
     }
 
-    @Transactional(readOnly = true)
     fun getByCategories(
         coordinates: Coordinates,
         radius: Double,

@@ -1,5 +1,4 @@
 package com.loess.geosurveymap.apiutils
-import com.mobile.amigoapp.api.utils.setProcessingStart
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.web.servlet.HandlerInterceptor
