@@ -6,6 +6,8 @@ import com.loess.geosurveymap.survey.Category
 import com.loess.geosurveymap.survey.SurveyEntity
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -28,31 +30,37 @@ class LocationService(
     fun getLocationByCoordinates(locationRequest: Coordinates): List<Location> =
         with(locationRequest) {
             val point = geometryFactory.createPoint(Coordinate(x, y))
-            return locationRepository.findByLocation(point).map { it.toResponse(LocationSimple(x, y, name = it.name)) }
+            return locationRepository.findByLocation(point).mapToLocationSimple()
         }
 
     fun getAllWithinRadius(coordinates: Coordinates, radius: Double): List<Location> {
         with(coordinates) {
-            return locationRepository.findAllWithinRadius(x, y, radius)
-                .map { it.toResponse(LocationSimple(x, y, name = it.name)) }
+            return locationRepository.findAllWithinRadius(x, y, radius).mapToLocationSimple()
         }
     }
 
     fun getAllWithinBoundingBox(boundingBox: BoundingBox, categories: List<Category>? = null): List<Location> {
         with(boundingBox) {
-            return locationRepository.findAllWithinBoundingBox(minX, minY, maxX, maxY, categories?.joinToString(","))
-                .map { it.toResponse(LocationSimple(it.location.x, it.location.y, name = it.name)) }
+            return locationRepository.findAllWithinBoundingBox(minX, minY, maxX, maxY, categories?.joinToString(",")).mapToLocationSimple()
         }
     }
 
     fun getAllLocations(): List<Location> = locationRepository.findAll()
         .map { it.toResponse(LocationSimple(it.location.x, it.location.y, name = it.name)) }
 
+    fun getFilteredLocations(filters: Filters? = null, pageable: Pageable): Page<Location> {
+        return filters?.let {
+            val specification = LocationSpecification.build(it)
+            locationRepository.findAll(specification, pageable).mapToLocationSimple()
+        } ?: run {
+            locationRepository.findAll(pageable).mapToLocationSimple()
+        }
+    }
+
     fun getLocationBySurveyCategory(coordinates: Coordinates, categories: List<Category>): List<Location> {
         with(coordinates) {
             val point = geometryFactory.createPoint(Coordinate(x, y))
-            return locationRepository.findByLocationAndSurvey_CategoryIn(point, categories)
-                .map { it.toResponse(LocationSimple(x, y, name = it.name)) }
+            return locationRepository.findByLocationAndSurvey_CategoryIn(point, categories).mapToLocationSimple()
         }
     }
 
@@ -69,4 +77,6 @@ class LocationService(
         ).map { it.toResponse(LocationSimple(it.location.x, it.location.y, it.name)) }
     }
 
+    private fun Page<LocationEntity>.mapToLocationSimple() = this.map { loc -> loc.toResponse(LocationSimple(loc.location.x, loc.location.y, name = loc.name)) }
+    private fun List<LocationEntity>.mapToLocationSimple() = this.map { loc -> loc.toResponse(LocationSimple(loc.location.x, loc.location.y, name = loc.name)) }
 }

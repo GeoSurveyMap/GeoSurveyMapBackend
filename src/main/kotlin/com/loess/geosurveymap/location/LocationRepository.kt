@@ -3,12 +3,13 @@ package com.loess.geosurveymap.location
 import com.loess.geosurveymap.survey.Category
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface LocationRepository : JpaRepository<LocationEntity, Long> {
+interface LocationRepository : JpaRepository<LocationEntity, Long>, JpaSpecificationExecutor<LocationEntity> {
     fun findByLocation(location: Point): List<LocationEntity>
     fun findByLocationAndSurvey_CategoryIn(location: Point, categories: List<Category>): List<LocationEntity>
 

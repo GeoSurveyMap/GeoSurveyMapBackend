@@ -3,6 +3,7 @@ package com.loess.geosurveymap.survey
 import com.loess.geosurveymap.location.LocationRequest
 import com.loess.geosurveymap.location.LocationSimple
 import com.loess.geosurveymap.user.User
+import java.time.Instant
 
 data class Survey(
     val id: Long? = null,
@@ -11,7 +12,8 @@ data class Survey(
     val solution: String,
     var location: LocationSimple,
     val affectedArea: Double,
-    val user: User
+    val user: User,
+    val createdAt: Instant
 )
 
 data class SurveyRequest(

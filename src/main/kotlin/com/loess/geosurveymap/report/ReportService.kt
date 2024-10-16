@@ -1,22 +1,29 @@
 package com.loess.geosurveymap.report
 
-import com.loess.geosurveymap.location.Location
-import com.loess.geosurveymap.survey.SurveyService
+import com.loess.geosurveymap.location.Filters
+import com.loess.geosurveymap.location.LocationService
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFColor
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.awt.Color
 import java.io.ByteArrayOutputStream
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.*
+
 
 @Service
-class ReportService(private val surveyService: SurveyService) {
+class ReportService(private val locationService: LocationService) {
 
-    fun generateSurveyExcelReport(): Resource {
-        val data = surveyService.getAllSurveysWithLocation()
+    fun generateSurveyExcelReport(filters: Filters?, pageable: Pageable): Resource {
+        val data = locationService.getFilteredLocations(filters, pageable)
         val workbook = XSSFWorkbook()
         val sheet = workbook.createSheet("Surveys")
 
@@ -26,7 +33,7 @@ class ReportService(private val surveyService: SurveyService) {
         val styleColumn8 = createColoredCellStyle(workbook, Color(255, 204, 204))
 
         val headerRow: Row = sheet.createRow(0)
-        val headers = listOf("ID", "Category", "Description", "Solution", "Affected Area", "Location Name", "X", "Y", "User Email")
+        val headers = listOf("ID", "Category", "Description", "Solution", "Affected Area", "Location Name", "X", "Y", "User Email", "Created At")
 
         headers.forEachIndexed { index, header ->
             val cell: Cell = headerRow.createCell(index)
@@ -75,6 +82,14 @@ class ReportService(private val surveyService: SurveyService) {
                 val cell8 = row.createCell(8)
                 cell8.setCellValue(survey.user.email)
                 cell8.cellStyle = styleColumn8
+
+                val date = Instant.now()
+                val formatter = ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("UTC"))
+                val formattedDate = formatter.format(date)
+
+                val cell9 = row.createCell(9)
+                cell9.setCellValue(formattedDate)
+                cell9.cellStyle = styleColumn0
             }
         }
 

@@ -2,11 +2,10 @@ package com.loess.geosurveymap.survey
 
 import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.dto.Coordinates
-import com.loess.geosurveymap.location.Location
-import com.loess.geosurveymap.location.LocationService
-import com.loess.geosurveymap.location.LocationSimple
-import com.loess.geosurveymap.location.toSimple
+import com.loess.geosurveymap.location.*
 import com.loess.geosurveymap.user.UserService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -28,8 +27,6 @@ class SurveyService(
     }
 
     fun getAllSurveys(): List<Survey> = locationService.getAllLocations().map { it.survey }
-
-    fun getAllSurveysWithLocation(): List<Location> = locationService.getAllLocations()
 
     fun getSurveysByLocation(locationRequest: Coordinates): List<Survey> =
         locationService.getLocationByCoordinates(locationRequest).map { it.survey }

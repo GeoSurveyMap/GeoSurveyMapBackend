@@ -21,5 +21,6 @@ fun SurveyEntity.toResponse(location: LocationSimple): Survey =
         solution = solution,
         location = location,
         affectedArea = affectedArea,
-        user = user.toResponse()
+        user = user.toResponse(),
+        createdAt = createdAt
     )
