@@ -1,8 +1,8 @@
 package com.loess.geosurveymap.report
 
 import com.loess.geosurveymap.apiutils.ApiRequestHandler
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.core.io.Resource
-import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -18,20 +18,17 @@ class ReportController(
     private val apiRequestHandler: ApiRequestHandler
 ) {
 
-    @GetMapping("/surveys/csv")
-    fun downloadSurveyCsvReport(): ResponseEntity<Resource> {
-        return apiRequestHandler.handleResource(EXCEL_TYPE, customHeaders()) {
+    @Operation(summary = "Get report from all existing surveys in xlsx format")
+    @GetMapping("/surveys")
+    fun downloadReport(): ResponseEntity<Resource> {
+        val date = Instant.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm").withZone(ZoneId.of("UTC"))
+        val formattedDate = formatter.format(date)
+        val fileName = "survey-$formattedDate.xlsx"
+
+        return apiRequestHandler.handleResource(EXCEL_TYPE, fileName) {
             excelReportService.generateSurveyExcelReport()
         }
     }
 
-    private fun customHeaders(): HttpHeaders {
-        val date = Instant.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("UTC"))
-        val formattedDate = formatter.format(date)
-        val headers = HttpHeaders()
-        headers["FILE-NAME"] = "survey-$formattedDate.xlsx"
-
-        return headers
-    }
 }
