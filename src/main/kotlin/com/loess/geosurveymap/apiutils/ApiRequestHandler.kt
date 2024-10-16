@@ -23,7 +23,7 @@ class ApiRequestHandler(private val apiResponseBuilder: ApiResponseBuilder) {
         return apiResponseBuilder.buildPageResponse(result, processingStart)
     }
 
-    fun handleResource(contentType: String, data: () -> Resource): ResponseEntity<Resource> {
+    fun handleResource(contentType: String, customHeaders: HttpHeaders? = null, data: () -> Resource): ResponseEntity<Resource> {
         val resource = data()
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_TYPE, contentType)

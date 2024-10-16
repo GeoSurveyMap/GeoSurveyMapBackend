@@ -4,14 +4,17 @@ import com.loess.geosurveymap.survey.Survey
 import com.loess.geosurveymap.survey.SurveyService
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
+import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.springframework.core.io.ByteArrayResource
+import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 import java.io.ByteArrayOutputStream
 
 @Service
 class ReportService(private val surveyService: SurveyService) {
 
-    fun generateSurveyExcelReport(): ByteArray {
+    fun generateSurveyExcelReport(): Resource {
         val surveys: List<Survey> = surveyService.getAllSurveys()
         val workbook = XSSFWorkbook()
         val sheet = workbook.createSheet("Surveys")
@@ -35,12 +38,13 @@ class ReportService(private val surveyService: SurveyService) {
         }
 
         headers.indices.forEach { sheet.autoSizeColumn(it) }
+        return generateResource(workbook)
+    }
 
+    private fun generateResource(workbook: Workbook): Resource {
         val outputStream = ByteArrayOutputStream()
-        workbook.use { wb ->
-            wb.write(outputStream)
-        }
-
-        return outputStream.toByteArray()
+        workbook.use { it.write(outputStream) }
+        val resource = ByteArrayResource(outputStream.toByteArray())
+        return resource
     }
 }

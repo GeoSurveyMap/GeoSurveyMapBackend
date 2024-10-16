@@ -1,8 +1,16 @@
 package com.loess.geosurveymap.report
 
 import com.loess.geosurveymap.apiutils.ApiRequestHandler
+import org.springframework.core.io.Resource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
+const val EXCEL_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
 @RestController("/api/v1/reports")
 class ReportController(
@@ -10,29 +18,20 @@ class ReportController(
     private val apiRequestHandler: ApiRequestHandler
 ) {
 
-//    // CSV Report Endpoint
-//    @GetMapping("/surveys/csv")
-//    fun downloadSurveyCsvReport() {
-//        val csvContent = csvReportService.generateSurveyReport()
-//        val headers = HttpHeaders().apply {
-//            contentType = MediaType.TEXT_PLAIN
-//            set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=survey_report.csv")
-//        }
-//        return ResponseEntity.ok()
-//            .headers(headers)
-//            .body(csvContent.toByteArray())
-//    }
-//
-//    // Excel Report Endpoint
-//    @GetMapping("/api/v1/reports/surveys/excel")
-//    fun downloadSurveyExcelReport(): {
-//        val excelContent = excelReportService.generateSurveyExcelReport()
-//        val headers = HttpHeaders().apply {
-//            contentType = MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-//            set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=survey_report.xlsx")
-//        }
-//        return ResponseEntity.ok()
-//            .headers(headers)
-//            .body(excelContent)
-//    }
+    @GetMapping("/surveys/csv")
+    fun downloadSurveyCsvReport(): ResponseEntity<Resource> {
+        return apiRequestHandler.handleResource(EXCEL_TYPE, customHeaders()) {
+            excelReportService.generateSurveyExcelReport()
+        }
+    }
+
+    private fun customHeaders(): HttpHeaders {
+        val date = Instant.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("UTC"))
+        val formattedDate = formatter.format(date)
+        val headers = HttpHeaders()
+        headers["FILE-NAME"] = "survey-$formattedDate.xlsx"
+
+        return headers
+    }
 }
