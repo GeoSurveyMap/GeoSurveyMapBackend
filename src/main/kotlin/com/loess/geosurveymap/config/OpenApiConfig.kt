@@ -6,12 +6,18 @@ import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
+import io.swagger.v3.oas.models.servers.Server
+
+const val LOCALHOST = "http://localhost:8080"
+const val PRODUCTION_SERVER = "https://geosurveymapbackend-production.up.railway.app"
 
 @Configuration
 class OpenApiConfig {
 
     @Bean
     fun customOpenAPI(): OpenAPI {
+        val serverList = listOf(LOCALHOST, PRODUCTION_SERVER).map { url -> Server().url(url) }
+
         return OpenAPI()
             .components(
                 Components().addSecuritySchemes(
@@ -20,5 +26,6 @@ class OpenApiConfig {
                 )
             )
             .addSecurityItem(SecurityRequirement().addList("bearerAuth"))
+            .servers(serverList)
     }
 }
