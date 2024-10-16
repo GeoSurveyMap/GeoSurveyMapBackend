@@ -1,4 +1,4 @@
-package com.loess.geosurveymap.report
+package com.loess.geosurveymap.admin
 
 import com.loess.geosurveymap.location.Filters
 import com.loess.geosurveymap.location.LocationService
@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service
 import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.*
 
 
