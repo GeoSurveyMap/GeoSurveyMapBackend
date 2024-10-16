@@ -23,11 +23,11 @@ class ApiRequestHandler(private val apiResponseBuilder: ApiResponseBuilder) {
         return apiResponseBuilder.buildPageResponse(result, processingStart)
     }
 
-    fun handleResource(contentType: String, data: () -> Resource): ResponseEntity<Resource> {
+    fun handleResource(contentType: String, filename: String, data: () -> Resource): ResponseEntity<Resource> {
         val resource = data()
         return ResponseEntity.ok()
             .header(HttpHeaders.CONTENT_TYPE, contentType)
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${resource.filename}")
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${filename}")
             .body(resource)
     }
 }

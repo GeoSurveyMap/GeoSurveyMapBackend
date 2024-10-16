@@ -35,6 +35,7 @@ class SecurityConfig(
             .cors { corsConfigurationSource() }
             .authorizeHttpRequests {
                 it.requestMatchers("/api/v1/survey/create").authenticated()
+                //it.requestMatchers("/api/v1/reports/**").hasRole("ADMIN")
                 it.anyRequest().permitAll()
             }
             .oauth2ResourceServer {
