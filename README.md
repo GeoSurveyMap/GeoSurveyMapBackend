@@ -2,7 +2,6 @@
 
 ### Prerequisites
 
-- installed java 21
 - running docker
 
 ### How to use the application?
@@ -12,12 +11,15 @@ Before running the application, set the executable mode for the `wait-for-it.sh`
 chmod +x wait-for-it.sh
 ```
 
-Then just use the `start.sh` script  from the `dev/` directory<br/>
+Then just use the `start-remote.sh` script  from the `dev/` directory<br/>
 ```shell
-sh start.sh
+sh start-remote.sh
 ```
 
 Api will be available under the following [URL](http://localhost:8080/swagger-ui/index.html#/)
 
-## TODO: apply the docker-compose only
+Minio is available under the following [URL](http://localhost:9090/buckets)
 
+Minio credentials:
+ - minioadmin
+ - minioadmin

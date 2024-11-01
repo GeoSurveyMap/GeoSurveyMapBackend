@@ -52,7 +52,8 @@ class SecurityConfig(
         corsConfiguration.allowedOrigins = listOf(
             "https://geosurveymapbackend-production.up.railway.app/",
             "http://localhost:3000",
-            "https://geo-survey-map-web-production.up.railway.app"
+            "https://geo-survey-map-web-production.up.railway.app",
+            "http://localhost:63343"
         )
         corsConfiguration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
         corsConfiguration.allowCredentials = true

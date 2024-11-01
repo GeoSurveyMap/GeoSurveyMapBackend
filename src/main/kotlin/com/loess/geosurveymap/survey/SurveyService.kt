@@ -8,20 +8,25 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 @Service
 @Transactional(readOnly = true)
 class SurveyService(
     private val surveyRepository: SurveyRepository,
     private val locationService: LocationService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val storageService: StorageService
 ) {
 
     @Transactional
-    fun saveSurvey(surveyRequest: SurveyRequest, kindeId: String): Survey {
+    fun saveSurvey(surveyRequest: SurveyRequest, kindeId: String, file: MultipartFile): Survey {
         val user = userService.findByKindeId(kindeId)
         val survey = surveyRepository.save(surveyRequest.toEntity(user))
         val location = locationService.saveLocationForSurvey(surveyRequest.locationRequest, survey)
+        val path = survey.buildSurveyFilePath()
+        storageService.uploadFile(path, file.inputStream, file.contentType!!)
+        survey.apply { this.filePath = path }.also { surveyRepository.save(it) }
 
         return survey.toResponse(location.toSimple())
     }
@@ -52,4 +57,6 @@ class SurveyService(
             locationRequest,
             categories
         ).map { it.survey }
+
+    private fun SurveyEntity.buildSurveyFilePath() = "${this.id}-${this.category.name}-photo"
 }

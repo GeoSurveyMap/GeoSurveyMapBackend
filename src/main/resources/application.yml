@@ -45,3 +45,17 @@ spring:
   config:
     activate:
       on-profile: default
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2MB
+      max-file-size: 2MB
+      max-request-size: 2MB
+---
+minio:
+  url: http://minio:9000
+  access:
+    key: minioadmin
+    secret: minioadmin
+  bucket:
+    name: surveyimages

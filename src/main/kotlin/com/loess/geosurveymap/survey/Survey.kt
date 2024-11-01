@@ -13,7 +13,8 @@ data class Survey(
     var location: LocationSimple,
     val affectedArea: Double,
     val user: User,
-    val createdAt: Instant
+    val createdAt: Instant,
+    val filePath: String?
 )
 
 data class SurveyRequest(

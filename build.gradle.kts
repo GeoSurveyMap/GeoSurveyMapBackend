@@ -56,6 +56,9 @@ dependencies {
     implementation("io.micrometer:micrometer-tracing-bridge-brave")
     implementation("org.apache.poi:poi:5.3.0")
     implementation("org.apache.poi:poi-ooxml:5.3.0")
+    implementation("software.amazon.awssdk:s3:2.29.0")
+    implementation("io.minio:minio:8.5.13")
+    implementation("software.amazon.awssdk:apache-client:2.29.0")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 

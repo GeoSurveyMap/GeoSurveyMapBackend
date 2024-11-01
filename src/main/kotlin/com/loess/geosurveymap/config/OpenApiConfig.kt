@@ -16,7 +16,7 @@ class OpenApiConfig {
 
     @Bean
     fun customOpenAPI(): OpenAPI {
-        val serverList = listOf(LOCALHOST, PRODUCTION_SERVER).map { url -> Server().url(url) }
+        val serverList = listOf(PRODUCTION_SERVER, LOCALHOST).map { url -> Server().url(url) }
 
         return OpenAPI()
             .components(
