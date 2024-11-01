@@ -4,6 +4,7 @@ import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.dto.Coordinates
 import com.loess.geosurveymap.location.*
 import com.loess.geosurveymap.user.UserService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -16,7 +17,8 @@ class SurveyService(
     private val surveyRepository: SurveyRepository,
     private val locationService: LocationService,
     private val userService: UserService,
-    private val storageService: StorageService
+    private val storageService: StorageService,
+    @Value("\${minio.bucket.name}") private val bucketName: String
 ) {
 
     @Transactional
@@ -24,7 +26,7 @@ class SurveyService(
         val user = userService.findByKindeId(kindeId)
         val survey = surveyRepository.save(surveyRequest.toEntity(user))
         val location = locationService.saveLocationForSurvey(surveyRequest.locationRequest, survey)
-        val path = survey.buildSurveyFilePath()
+        val path = "$bucketName/${survey.buildSurveyFilePath()}"
         storageService.uploadFile(path, file.inputStream, file.contentType!!)
         survey.apply { this.filePath = path }.also { surveyRepository.save(it) }
 
