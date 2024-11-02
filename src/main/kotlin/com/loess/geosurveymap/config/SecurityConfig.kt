@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.oauth2.jwt.JwtDecoders
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -35,12 +36,13 @@ class SecurityConfig(
             .cors { corsConfigurationSource() }
             .authorizeHttpRequests {
                 it.requestMatchers("/api/v1/survey/create").authenticated()
-                //it.requestMatchers("/api/v1/reports/**").hasRole("ADMIN")
+                it.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 it.anyRequest().permitAll()
             }
             .oauth2ResourceServer {
-                it.jwt { jwt ->
-                    jwt.decoder(JwtDecoders.fromIssuerLocation(issuer))
+                it.jwt { jwtConfigurer ->
+                    jwtConfigurer.decoder(JwtDecoders.fromIssuerLocation(issuer))
+                    jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter())
                 }
             }
             .build()
@@ -53,7 +55,6 @@ class SecurityConfig(
             "https://geosurveymapbackend-production.up.railway.app/",
             "http://localhost:3000",
             "https://geo-survey-map-web-production.up.railway.app",
-            "http://localhost:63343"
         )
         corsConfiguration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
         corsConfiguration.allowCredentials = true
@@ -61,6 +62,12 @@ class SecurityConfig(
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", corsConfiguration)
         return source
+    }
+
+    private fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
+        val converter = JwtAuthenticationConverter()
+        converter.setJwtGrantedAuthoritiesConverter(CustomJwtGrantedAuthoritiesConverter())
+        return converter
     }
 
 }

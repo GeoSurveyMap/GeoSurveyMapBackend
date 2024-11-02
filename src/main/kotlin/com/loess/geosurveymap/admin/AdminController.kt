@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 import java.time.ZoneId
@@ -35,6 +36,7 @@ class AdminController(
 ) {
 
     @Operation(summary = "Get report from collected data in xlsx format")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/report")
     fun downloadReport(
         @Parameter(description = "Page number (0-based)", example = PAGEABLE_EXAMPLE)
@@ -135,6 +137,7 @@ class AdminController(
     }
 
     @Operation(summary = "Filter collected data")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/data/filter")
     fun filterData(
         @Parameter(description = "Page number (0-based)", example = PAGEABLE_EXAMPLE)
