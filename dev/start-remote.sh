@@ -11,7 +11,7 @@ echo "GeoSurveyMap Version: $VERSION"
 
 COMPOSE_FILE="$DOCKER_COMPOSE_DIR/compose-dev-remote.yml"
 
-docker image rm jkazmierczak/projecth-repository
+docker image rm jkazmierczak/geosurveymap-backend:latest
 
 cd $DOCKER_COMPOSE_DIR
 echo "Starting $COMPOSE_FILE..."
