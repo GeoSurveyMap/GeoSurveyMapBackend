@@ -11,6 +11,7 @@ echo "GeoSurveyMap Version: $VERSION"
 
 COMPOSE_FILE="$DOCKER_COMPOSE_DIR/compose-dev-remote.yml"
 
+echo "Removing old image..."
 docker image rm jkazmierczak/geosurveymap-backend:latest
 
 cd $DOCKER_COMPOSE_DIR

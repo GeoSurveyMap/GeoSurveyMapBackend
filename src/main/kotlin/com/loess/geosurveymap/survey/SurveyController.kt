@@ -7,9 +7,13 @@ import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.dto.Coordinates
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/api/v1/survey")
@@ -19,9 +23,20 @@ class SurveyController(
 ) {
 
     @Operation(summary = "Create a new survey", security = [SecurityRequirement(name = "bearerAuth")])
-    @IsGivenUser
+    @PostMapping("/create")
+    fun createSurvey(
+        @RequestBody surveyRequest: SurveyRequest,
+        @RequestParam("filePath", required = false) filePath: String? = null,
+        @AuthenticationPrincipal jwt: Jwt
+    ): ApiResponse<Survey> =
+        apiRequestHandler.handle {
+            val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+            surveyService.saveSurvey(surveyRequest, kindeId, filePath)
+        }
+
+    @Operation(summary = "Uploads survey file", security = [SecurityRequirement(name = "bearerAuth")])
     @PostMapping(
-        value = ["/{kindeId}/create"],
+        value = ["/upload"],
         consumes = [
             MediaType.MULTIPART_FORM_DATA_VALUE,
             MediaType.APPLICATION_JSON_VALUE,
@@ -29,13 +44,11 @@ class SurveyController(
             MediaType.APPLICATION_OCTET_STREAM_VALUE,
         ]
     )
-    fun createSurvey(
-        @PathVariable kindeId: String,
-        @RequestPart("surveyRequest") surveyRequest: SurveyRequest,
+    fun uploadFile(
         @RequestPart("file") file: MultipartFile,
-    ): ApiResponse<Survey> =
+    ): ApiResponse<String> =
         apiRequestHandler.handle {
-            surveyService.saveSurvey(surveyRequest, kindeId, file)
+            surveyService.uploadFile(file)
         }
 
     @Operation(summary = "Get all existing surveys")

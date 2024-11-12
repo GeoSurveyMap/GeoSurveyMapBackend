@@ -35,7 +35,7 @@ class SecurityConfig(
             .csrf { it.disable() }
             .cors { corsConfigurationSource() }
             .authorizeHttpRequests {
-                it.requestMatchers("/api/v1/survey/create").authenticated()
+                it.requestMatchers("/api/v1/survey/create", "/api/v1/survey/upload").authenticated()
                 it.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 it.anyRequest().permitAll()
             }

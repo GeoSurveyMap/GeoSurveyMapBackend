@@ -5,11 +5,11 @@ import com.loess.geosurveymap.dto.Coordinates
 import com.loess.geosurveymap.location.*
 import com.loess.geosurveymap.user.UserService
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
+import java.util.UUID
 
 @Service
 @Transactional(readOnly = true)
@@ -22,15 +22,21 @@ class SurveyService(
 ) {
 
     @Transactional
-    fun saveSurvey(surveyRequest: SurveyRequest, kindeId: String, file: MultipartFile): Survey {
+    fun saveSurvey(surveyRequest: SurveyRequest, kindeId: String, filePath: String? = null): Survey {
         val user = userService.findByKindeId(kindeId)
         val survey = surveyRepository.save(surveyRequest.toEntity(user))
         val location = locationService.saveLocationForSurvey(surveyRequest.locationRequest, survey)
-        val path = "$bucketName/${survey.buildSurveyFilePath()}"
-        storageService.uploadFile(path, file.inputStream, file.contentType!!)
-        survey.apply { this.filePath = path }.also { surveyRepository.save(it) }
-
+        filePath?.let { path -> survey.apply { this.filePath = path } }
+        surveyRepository.save(survey)
         return survey.toResponse(location.toSimple())
+    }
+
+    @Transactional
+    fun uploadFile(file: MultipartFile): String {
+        val uuid = UUID.randomUUID()
+        val path = "$bucketName/${uuid}-survey"
+        file.let { storageService.uploadFile(path, file.inputStream, file.contentType!!) }
+        return path
     }
 
     fun getAllSurveys(): List<Survey> = locationService.getAllLocations().map { it.survey }
