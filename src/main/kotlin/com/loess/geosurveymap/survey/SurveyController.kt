@@ -2,13 +2,13 @@ package com.loess.geosurveymap.survey
 
 import com.loess.geosurveymap.apiutils.ApiRequestHandler
 import com.loess.geosurveymap.apiutils.dto.ApiResponse
-import com.loess.geosurveymap.common.IsGivenUser
 import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.dto.Coordinates
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*

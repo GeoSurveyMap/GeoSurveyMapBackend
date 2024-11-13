@@ -2,6 +2,8 @@ package com.loess.geosurveymap.location
 
 import com.loess.geosurveymap.survey.Category
 import org.locationtech.jts.geom.Point;
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
@@ -72,4 +74,7 @@ interface LocationRepository : JpaRepository<LocationEntity, Long>, JpaSpecifica
         @Param("radius") radius: Double,
         @Param("categories") categories: String
     ): List<LocationEntity>
+
+    @Query("select l from LocationEntity l where l.survey.isAccepted = false")
+    fun findAllUnacceptedSurveys(pageable: Pageable): Page<LocationEntity>
 }

@@ -23,7 +23,7 @@ class SurveyEntity(
     @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     val user: UserEntity,
     var filePath: String? = null,
-    val isPhotoAccepted: Boolean = false
+    var isAccepted: Boolean = false
 ) : Auditable() {
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true

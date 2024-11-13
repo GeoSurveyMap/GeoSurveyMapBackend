@@ -2,10 +2,13 @@ package com.loess.geosurveymap.survey
 
 import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.dto.Coordinates
+import com.loess.geosurveymap.exceptions.NotFoundException
 import com.loess.geosurveymap.location.*
 import com.loess.geosurveymap.user.UserService
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Async
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -42,7 +45,10 @@ class SurveyService(
     fun getAllSurveys(): List<Survey> = locationService.getAllLocations().map { it.survey }
 
     fun getSurveysByLocation(locationRequest: Coordinates): List<Survey> =
-        locationService.getLocationByCoordinates(locationRequest).map { it.survey }
+        locationService.getLocationByCoordinates(locationRequest).map {
+            it.survey.location = LocationSimple(it.x, it.y, it.name)
+            it.survey
+        }
 
     fun getAllSurveysWithinRadius(locationRequest: Coordinates, radius: Double): List<Survey> =
         locationService.getAllWithinRadius(locationRequest, radius).map {
@@ -66,5 +72,18 @@ class SurveyService(
             categories
         ).map { it.survey }
 
-    private fun SurveyEntity.buildSurveyFilePath() = "${this.id}-${this.category.name}-photo"
+    @Transactional
+    fun accept(surveyId: Long) {
+        surveyRepository.findByIdOrNull(surveyId)?.let {
+            it.isAccepted = true
+            surveyRepository.save(it)
+        } ?: throw NotFoundException("Survey with given id not found")
+    }
+
+    fun getUnacceptedSurveys(page: Pageable): Page<Survey> {
+        return locationService.getAllUnacceptedSurveys(page).map {
+            it.survey.location = LocationSimple(it.x, it.y, it.name)
+            it.survey
+        }
+    }
 }

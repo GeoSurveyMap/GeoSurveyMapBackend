@@ -2,8 +2,10 @@ package com.loess.geosurveymap.user
 
 import com.loess.geosurveymap.auditable.Auditable
 import com.loess.geosurveymap.survey.SurveyEntity
+import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import jakarta.persistence.*
 import org.hibernate.annotations.NaturalId
+import org.hibernate.annotations.Type
 import org.hibernate.proxy.HibernateProxy
 
 @Entity
@@ -19,7 +21,10 @@ class UserEntity(
 
     @Enumerated(value = EnumType.STRING)
     val role: Role = Role.ROLE_USER,
-    val email: String
+    val email: String,
+
+    @Convert(converter = DataPermissionListConverter::class)
+    var permissions: MutableList<DataPermission> = mutableListOf()
 ) : Auditable() {
 
     final override fun equals(other: Any?): Boolean {

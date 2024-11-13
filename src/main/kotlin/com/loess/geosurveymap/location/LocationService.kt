@@ -77,6 +77,8 @@ class LocationService(
         ).map { it.toResponse(LocationSimple(it.location.x, it.location.y, it.name)) }
     }
 
+    fun getAllUnacceptedSurveys(page: Pageable): Page<Location> = locationRepository.findAllUnacceptedSurveys(page).mapToLocationSimple()
+
     private fun Page<LocationEntity>.mapToLocationSimple() = this.map { loc -> loc.toResponse(LocationSimple(loc.location.x, loc.location.y, name = loc.name)) }
     private fun List<LocationEntity>.mapToLocationSimple() = this.map { loc -> loc.toResponse(LocationSimple(loc.location.x, loc.location.y, name = loc.name)) }
 }

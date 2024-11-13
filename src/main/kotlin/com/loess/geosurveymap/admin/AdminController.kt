@@ -6,6 +6,8 @@ import com.loess.geosurveymap.location.Filters
 import com.loess.geosurveymap.location.Location
 import com.loess.geosurveymap.location.LocationService
 import com.loess.geosurveymap.survey.Category
+import com.loess.geosurveymap.survey.Survey
+import com.loess.geosurveymap.survey.SurveyService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.core.io.Resource
@@ -33,6 +35,7 @@ class AdminController(
     private val excelReportService: ReportService,
     private val locationService: LocationService,
     private val apiRequestHandler: ApiRequestHandler,
+    private val surveyService: SurveyService,
 ) {
 
     @Operation(summary = "Get report from collected data in xlsx format")
@@ -280,4 +283,23 @@ class AdminController(
         return filters
     }
 
+    @Operation(summary = "Accept survey")
+    @PutMapping("/{surveyId}/accept")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun acceptSurvey(@PathVariable surveyId: Long) =
+        apiRequestHandler.handle {
+            surveyService.accept(surveyId)
+        }
+
+    @Operation(summary = "Get unaccepted surveys")
+    @GetMapping("/surveys/unaccepted")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun getUnacceptedSurveys(
+        @Parameter(description = "Page number (0-based)", example = PAGEABLE_EXAMPLE)
+        @PageableDefault(sort = ["createdAt"], direction = Sort.Direction.DESC, size = 20)
+        pageable: Pageable,
+    ): ApiResponse<List<Survey>> =
+        apiRequestHandler.handlePage {
+            surveyService.getUnacceptedSurveys(pageable)
+        }
 }
