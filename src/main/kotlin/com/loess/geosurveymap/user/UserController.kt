@@ -21,7 +21,7 @@ class UserController(
 
     @Operation(summary = "Register a new user")
     @PostMapping
-    fun register(@RequestBody user: User) = apiRequestHandler.handle {
+    fun register(@RequestBody user: UserRequest) = apiRequestHandler.handle {
         userService.registerUser(user)
     }
 

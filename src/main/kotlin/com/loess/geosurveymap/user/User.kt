@@ -7,3 +7,10 @@ data class User(
     val role: Role,
     val permissions: MutableList<DataPermission> = mutableListOf()
 )
+
+data class UserRequest(
+    val kindeId: String,
+    val email: String,
+    val role: Role,
+    val permissions: MutableList<DataPermission> = mutableListOf()
+)

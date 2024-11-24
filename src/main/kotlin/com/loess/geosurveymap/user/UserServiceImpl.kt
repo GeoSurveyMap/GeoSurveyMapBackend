@@ -13,12 +13,12 @@ class UserServiceImpl(
     private val userRepository: UserRepository
 ): UserService {
 
-    override fun registerUser(user: User): Long {
+    override fun registerUser(user: UserRequest): Long {
         if (userRepository.existsByEmail(user.email)) {
             throw ConflictException("User with this email already exists")
         }
 
-        return userRepository.save(user.toEntity()).id
+        return userRepository.save(user.toUser().toEntity()).id
     }
 
     @Transactional(readOnly = true)
