@@ -21,7 +21,6 @@ class SurveyService(
     private val locationService: LocationService,
     private val userService: UserService,
     private val storageService: StorageService,
-    @Value("\${minio.bucket.name}") private val bucketName: String
 ) {
 
     @Transactional
@@ -37,7 +36,7 @@ class SurveyService(
     @Transactional
     fun uploadFile(file: MultipartFile): String {
         val uuid = UUID.randomUUID()
-        val path = "$bucketName/${uuid}-survey"
+        val path = "${uuid}-survey"
         file.let { storageService.uploadFile(path, file.inputStream, file.contentType!!) }
         return path
     }
