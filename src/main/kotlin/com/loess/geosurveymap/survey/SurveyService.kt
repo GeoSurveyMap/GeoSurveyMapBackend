@@ -85,4 +85,10 @@ class SurveyService(
             it.survey
         }
     }
+
+    fun getUserSurveys(kindeId: String): List<Survey> {
+        userService.findByKindeId(kindeId).let {
+            return locationService.getByUser(kindeId).map { it.survey }
+        }
+    }
 }

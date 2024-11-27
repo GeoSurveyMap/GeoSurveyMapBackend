@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
@@ -19,7 +18,7 @@ import org.springframework.web.server.ResponseStatusException
 @RequestMapping("/api/v1/survey")
 class SurveyController(
     private val surveyService: SurveyService,
-    private val apiRequestHandler: ApiRequestHandler
+    private val apiRequestHandler: ApiRequestHandler,
 ) {
 
     @Operation(summary = "Create a new survey", security = [SecurityRequirement(name = "bearerAuth")])
@@ -98,5 +97,13 @@ class SurveyController(
             )
         }
 
+
+    @Operation(summary = "Get user surveys")
+    @GetMapping("/self")
+    fun getUserSurveys(@AuthenticationPrincipal jwt: Jwt): ApiResponse<List<Survey>> =
+        apiRequestHandler.handle {
+            val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+            surveyService.getUserSurveys(kindeId)
+        }
 }
 

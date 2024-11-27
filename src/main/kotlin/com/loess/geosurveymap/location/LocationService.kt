@@ -79,6 +79,8 @@ class LocationService(
 
     fun getAllUnacceptedSurveys(page: Pageable): Page<Location> = locationRepository.findAllUnacceptedSurveys(page).mapToLocationSimple()
 
-    private fun Page<LocationEntity>.mapToLocationSimple() = this.map { loc -> loc.toResponse(LocationSimple(loc.location.x, loc.location.y, name = loc.name)) }
-    private fun List<LocationEntity>.mapToLocationSimple() = this.map { loc -> loc.toResponse(LocationSimple(loc.location.x, loc.location.y, name = loc.name)) }
+    fun getByUser(kindeId: String): List<Location> = locationRepository.findByUser(kindeId).mapToLocationSimple()
+
+    private fun Page<LocationEntity>.mapToLocationSimple(): Page<Location> = this.map { loc -> loc.toResponse(LocationSimple(loc.location.x, loc.location.y, name = loc.name)) }
+    private fun List<LocationEntity>.mapToLocationSimple(): List<Location> = this.map { loc -> loc.toResponse(LocationSimple(loc.location.x, loc.location.y, name = loc.name)) }
 }
