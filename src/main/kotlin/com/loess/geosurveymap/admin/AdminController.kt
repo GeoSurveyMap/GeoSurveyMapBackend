@@ -8,6 +8,10 @@ import com.loess.geosurveymap.location.LocationService
 import com.loess.geosurveymap.survey.Category
 import com.loess.geosurveymap.survey.Survey
 import com.loess.geosurveymap.survey.SurveyService
+import com.loess.geosurveymap.survey.SurveyStatus
+import com.loess.geosurveymap.user.User
+import com.loess.geosurveymap.user.UserService
+import com.loess.geosurveymap.user.UserStatus
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.core.io.Resource
@@ -36,6 +40,7 @@ class AdminController(
     private val locationService: LocationService,
     private val apiRequestHandler: ApiRequestHandler,
     private val surveyService: SurveyService,
+    private val userService: UserService
 ) {
 
     @Operation(summary = "Get report from collected data in xlsx format")
@@ -283,12 +288,12 @@ class AdminController(
         return filters
     }
 
-    @Operation(summary = "Accept survey")
-    @PutMapping("/{surveyId}/accept")
+    @Operation(summary = "Accept/Reject survey")
+    @PutMapping("/{surveyId}/status/{status}")
     @PreAuthorize("hasRole('ADMIN')")
-    fun acceptSurvey(@PathVariable surveyId: Long) =
+    fun acceptSurvey(@PathVariable surveyId: Long, @PathVariable status: SurveyStatus) =
         apiRequestHandler.handle {
-            surveyService.accept(surveyId)
+            surveyService.accept(surveyId, status)
         }
 
     @Operation(summary = "Get unaccepted surveys")
@@ -301,5 +306,23 @@ class AdminController(
     ): ApiResponse<List<Survey>> =
         apiRequestHandler.handlePage {
             surveyService.getUnacceptedSurveys(pageable)
+        }
+
+    @Operation(summary = "Delete user and all surveys he created")
+    @DeleteMapping("/users/{kindeId}/delete")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun deleteUser(@PathVariable kindeId: String) = apiRequestHandler.handle {
+        userService.deleteUser(kindeId)
+    }
+
+    @Operation(summary = "Ban/reactivate user account")
+    @DeleteMapping("/users/{kindeId}/status/{userStatus}")
+    @PreAuthorize("hasRole('ADMIN')")
+    fun changeUserStatus(
+        @PathVariable kindeId: String,
+        @PathVariable userStatus: UserStatus
+    ): ApiResponse<User> =
+        apiRequestHandler.handle {
+            userService.changeUserStatus(kindeId, userStatus)
         }
 }

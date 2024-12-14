@@ -45,9 +45,11 @@ class SurveyController(
     )
     fun uploadFile(
         @RequestPart("file") file: MultipartFile,
+        @AuthenticationPrincipal jwt: Jwt
     ): ApiResponse<String> =
         apiRequestHandler.handle {
-            surveyService.uploadFile(file)
+            val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+            surveyService.uploadFile(file, kindeId)
         }
 
     @Operation(summary = "Get all existing surveys")

@@ -1,10 +1,10 @@
 package com.loess.geosurveymap.user
 
 fun UserEntity.toResponse() =
-    User(id, kindeId, email, role, permissions)
+    User(id, kindeId, email, status, permissions)
 
 fun User.toEntity() =
-    UserEntity(id, kindeId, role, email, permissions)
+    UserEntity(id, kindeId, email, permissions, status)
 
 fun UserRequest.toUser() =
-    User(kindeId = kindeId, email = email, role = role, permissions = permissions)
+    User(kindeId = kindeId, email = email, permissions = permissions)

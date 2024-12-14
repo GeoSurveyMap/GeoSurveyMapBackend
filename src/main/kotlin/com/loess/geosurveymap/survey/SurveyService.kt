@@ -2,10 +2,12 @@ package com.loess.geosurveymap.survey
 
 import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.dto.Coordinates
+import com.loess.geosurveymap.exceptions.ForbiddenException
 import com.loess.geosurveymap.exceptions.NotFoundException
 import com.loess.geosurveymap.location.*
+import com.loess.geosurveymap.user.UserEntity
 import com.loess.geosurveymap.user.UserService
-import org.springframework.beans.factory.annotation.Value
+import com.loess.geosurveymap.user.UserStatus
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -25,7 +27,7 @@ class SurveyService(
 
     @Transactional
     fun saveSurvey(surveyRequest: SurveyRequest, kindeId: String, filePath: String? = null): Survey {
-        val user = userService.findByKindeId(kindeId)
+        val user = validateUserStatus(kindeId)
         val survey = surveyRepository.save(surveyRequest.toEntity(user))
         val location = locationService.saveLocationForSurvey(surveyRequest.locationRequest, survey)
         filePath?.let { path -> survey.apply { this.filePath = path } }
@@ -34,11 +36,21 @@ class SurveyService(
     }
 
     @Transactional
-    fun uploadFile(file: MultipartFile): String {
+    fun uploadFile(file: MultipartFile, kindeId: String): String {
+        validateUserStatus(kindeId)
         val uuid = UUID.randomUUID()
         val path = "${uuid}-survey"
         file.let { storageService.uploadFile(path, file.inputStream, file.contentType!!) }
         return path
+    }
+
+    private fun validateUserStatus(kindeId: String): UserEntity {
+        val user = userService.findByKindeId(kindeId)
+        if (user.status == UserStatus.BANNED) {
+            throw ForbiddenException("User is banned and cannot upload a new file.")
+        }
+
+        return user
     }
 
     fun getAllSurveys(): List<Survey> = locationService.getAllLocations().map { it.survey }
@@ -72,9 +84,13 @@ class SurveyService(
         ).map { it.survey }
 
     @Transactional
-    fun accept(surveyId: Long) {
+    fun accept(surveyId: Long, status: SurveyStatus) {
+        if (status == SurveyStatus.PENDING) {
+            throw IllegalArgumentException("You can set status to Accepted or Rejected only")
+        }
+
         surveyRepository.findByIdOrNull(surveyId)?.let {
-            it.isAccepted = true
+            it.status = status
             surveyRepository.save(it)
         } ?: throw NotFoundException("Survey with given id not found")
     }
@@ -88,7 +104,7 @@ class SurveyService(
 
     fun getUserSurveys(kindeId: String): List<Survey> {
         userService.findByKindeId(kindeId).let {
-            return locationService.getByUser(kindeId).map { it.survey }
+            return locationService.getSimpleLocationByUser(kindeId).map { it.survey }
         }
     }
 }

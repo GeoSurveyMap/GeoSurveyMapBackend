@@ -75,7 +75,7 @@ interface LocationRepository : JpaRepository<LocationEntity, Long>, JpaSpecifica
         @Param("categories") categories: String
     ): List<LocationEntity>
 
-    @Query("select l from LocationEntity l where l.survey.isAccepted = false")
+    @Query("select l from LocationEntity l where l.survey.status = 'PENDING'")
     fun findAllUnacceptedSurveys(pageable: Pageable): Page<LocationEntity>
 
     @Query("select l from LocationEntity l where l.survey.user.kindeId = :kindeId")

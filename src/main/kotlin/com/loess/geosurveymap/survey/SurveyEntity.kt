@@ -23,7 +23,9 @@ class SurveyEntity(
     @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     val user: UserEntity,
     var filePath: String? = null,
-    var isAccepted: Boolean = false
+
+    @Enumerated(EnumType.STRING)
+    var status: SurveyStatus = SurveyStatus.PENDING
 ) : Auditable() {
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true

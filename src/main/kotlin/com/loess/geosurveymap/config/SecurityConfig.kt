@@ -17,9 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-class SecurityConfig(
-    @Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}") private val issuer: String
-) {
+class SecurityConfig(@Value("\${spring.security.oauth2.resourceserver.jwt.issuer-uri}") private val issuer: String) {
 
     @Bean
     @Override
@@ -35,13 +33,8 @@ class SecurityConfig(
             .csrf { it.disable() }
             .cors { corsConfigurationSource() }
             .authorizeHttpRequests {
-                it.requestMatchers(
-                    "/api/v1/survey/create",
-                    "/api/v1/survey/upload",
-                ).authenticated()
-                it.requestMatchers(
-                    "/api/v1/admin/**",
-                ).hasRole("ADMIN")
+                it.requestMatchers("/api/v1/survey/create","/api/v1/survey/upload").authenticated()
+                it.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 it.anyRequest().permitAll()
             }
             .oauth2ResourceServer {

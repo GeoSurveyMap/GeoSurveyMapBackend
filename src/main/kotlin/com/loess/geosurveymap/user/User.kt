@@ -4,13 +4,12 @@ data class User(
     val id: Long = 0,
     val kindeId: String,
     val email: String,
-    val role: Role,
+    val status: UserStatus = UserStatus.ACTIVE,
     val permissions: MutableList<DataPermission> = mutableListOf()
 )
 
 data class UserRequest(
     val kindeId: String,
     val email: String,
-    val role: Role,
     val permissions: MutableList<DataPermission> = mutableListOf()
 )

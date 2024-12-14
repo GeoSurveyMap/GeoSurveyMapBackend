@@ -18,13 +18,13 @@ class UserEntity(
 
     @NaturalId
     val kindeId: String,
-
-    @Enumerated(value = EnumType.STRING)
-    val role: Role = Role.ROLE_USER,
     val email: String,
 
     @Convert(converter = DataPermissionListConverter::class)
-    var permissions: MutableList<DataPermission> = mutableListOf()
+    var permissions: MutableList<DataPermission> = mutableListOf(),
+
+    @Enumerated(value = EnumType.STRING)
+    var status: UserStatus = UserStatus.ACTIVE
 ) : Auditable() {
 
     final override fun equals(other: Any?): Boolean {
@@ -46,7 +46,7 @@ class UserEntity(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(  id = $id   ,   kindeId = $kindeId   ,   role = $role   ,   email = $email )"
+        return this::class.simpleName + "(  id = $id   ,   kindeId = $kindeId   ,   status = $status   ,   email = $email )"
     }
 
 
