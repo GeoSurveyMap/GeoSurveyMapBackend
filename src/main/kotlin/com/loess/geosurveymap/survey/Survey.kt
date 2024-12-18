@@ -14,7 +14,8 @@ data class Survey(
     val affectedArea: Double,
     val user: User,
     val createdAt: Instant,
-    val filePath: String?
+    val filePath: String?,
+    val status: SurveyStatus
 )
 
 data class SurveyRequest(

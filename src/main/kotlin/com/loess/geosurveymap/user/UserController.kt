@@ -8,8 +8,12 @@ import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 
 @RestController
@@ -23,6 +27,13 @@ class UserController(
     @PostMapping
     fun register(@RequestBody user: UserRequest) = apiRequestHandler.handle {
         userService.registerUser(user)
+    }
+
+    @Operation(summary = "Delete yours account")
+    @DeleteMapping("/self")
+    fun deleteAccount(@AuthenticationPrincipal jwt: Jwt) = apiRequestHandler.handle {
+        val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+        userService.deleteUser(kindeId)
     }
 
     @Operation(summary = "Updates user's permissions")

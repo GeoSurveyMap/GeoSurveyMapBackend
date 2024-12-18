@@ -23,5 +23,6 @@ fun SurveyEntity.toResponse(location: LocationSimple): Survey =
         affectedArea = affectedArea,
         user = user.toResponse(),
         createdAt = createdAt,
-        filePath = filePath
+        filePath = filePath,
+        status = status
     )
