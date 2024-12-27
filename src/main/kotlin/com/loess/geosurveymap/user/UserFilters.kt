@@ -59,9 +59,19 @@ class UserSpecification(private val filter: UserFilters) : Specification<UserEnt
 
         filter.permissions?.let { perms ->
             perms.forEach { perm ->
-                predicates.add(
-                    criteriaBuilder.isMember(perm, root.get<Set<DataPermission>>("permissions"))
+                val pattern1 = "${perm.name},%"
+                val pattern2 = "%,${perm.name},%"
+                val pattern3 = "%,${perm.name}"
+                val pattern4 = perm.name
+
+                val predicate = criteriaBuilder.or(
+                    criteriaBuilder.like(root.get("permissions"), pattern1),
+                    criteriaBuilder.like(root.get("permissions"), pattern2),
+                    criteriaBuilder.like(root.get("permissions"), pattern3),
+                    criteriaBuilder.equal(root.get<String>("permissions"), pattern4)
                 )
+
+                predicates.add(predicate)
             }
         }
 
