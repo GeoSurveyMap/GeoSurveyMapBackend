@@ -18,9 +18,13 @@ import org.springframework.core.io.Resource
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -109,8 +113,11 @@ class AdminController(
         @RequestParam(required = false) centralY: Double?,
 
         @Parameter(description = "Radius in meters for spatial filtering - works only if centralX and centralY are filled too", example = "1000.0")
-        @RequestParam(required = false) radiusInMeters: Double?
+        @RequestParam(required = false) radiusInMeters: Double?,
+
+        @AuthenticationPrincipal jwt: Jwt
     ): ResponseEntity<Resource> {
+        val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
         val filters = buildFilter(
             id,
             name,
