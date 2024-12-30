@@ -117,7 +117,6 @@ class AdminController(
 
         @AuthenticationPrincipal jwt: Jwt
     ): ResponseEntity<Resource> {
-        val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
         val filters = buildFilter(
             id,
             name,
