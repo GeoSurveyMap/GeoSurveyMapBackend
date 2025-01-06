@@ -57,13 +57,13 @@ class SurveyService(
 
     fun getSurveysByLocation(locationRequest: Coordinates): List<Survey> =
         locationService.getLocationByCoordinates(locationRequest).map {
-            it.survey.location = LocationSimple(it.x, it.y, it.name)
+            it.survey.location = LocationResponse(it.x, it.y, it.name, it.countryCode)
             it.survey
         }
 
     fun getAllSurveysWithinRadius(locationRequest: Coordinates, radius: Double): List<Survey> =
         locationService.getAllWithinRadius(locationRequest, radius).map {
-            it.survey.location = LocationSimple(it.x, it.y, it.name)
+            it.survey.location = LocationResponse(it.x, it.y, it.name, it.countryCode)
             it.survey
         }
 
@@ -97,7 +97,7 @@ class SurveyService(
 
     fun getUnacceptedSurveys(page: Pageable): Page<Survey> {
         return locationService.getAllUnacceptedSurveys(page).map {
-            it.survey.location = LocationSimple(it.x, it.y, it.name)
+            it.survey.location = LocationResponse(it.x, it.y, it.name, it.countryCode)
             it.survey
         }
     }

@@ -4,16 +4,16 @@ import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
 
 @Converter
-class DataPermissionListConverter : AttributeConverter<MutableList<DataPermission>, String> {
+class DataPermissionListConverter : AttributeConverter<MutableList<CountryCode>, String> {
 
-    override fun convertToDatabaseColumn(attribute: MutableList<DataPermission>?): String {
+    override fun convertToDatabaseColumn(attribute: MutableList<CountryCode>?): String {
         return attribute?.joinToString(",") { it.name } ?: ""
     }
 
-    override fun convertToEntityAttribute(dbData: String?): MutableList<DataPermission> {
+    override fun convertToEntityAttribute(dbData: String?): MutableList<CountryCode> {
         return dbData?.split(",")
             ?.filter { it.isNotBlank() }
-            ?.map { DataPermission.valueOf(it) }
+            ?.map { CountryCode.valueOf(it) }
             ?.toMutableList() ?: mutableListOf()
     }
 }

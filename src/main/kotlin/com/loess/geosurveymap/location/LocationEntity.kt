@@ -2,6 +2,7 @@ package com.loess.geosurveymap.location
 
 import com.loess.geosurveymap.auditable.Auditable
 import com.loess.geosurveymap.survey.SurveyEntity
+import com.loess.geosurveymap.user.CountryCode
 import jakarta.persistence.*
 import org.hibernate.proxy.HibernateProxy
 import org.locationtech.jts.geom.Point;
@@ -21,7 +22,10 @@ class LocationEntity(
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
-    val survey: SurveyEntity
+    val survey: SurveyEntity,
+
+    @Enumerated(EnumType.STRING)
+    val countryCode: CountryCode
 ) : Auditable() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

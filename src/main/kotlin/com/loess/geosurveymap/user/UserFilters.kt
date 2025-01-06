@@ -12,7 +12,7 @@ data class UserFilters(
     val kindeId: String? = null,
     val role: Role? = null,
     val email: String? = null,
-    val permissions: List<DataPermission>? = null,
+    val permissions: List<CountryCode>? = null,
     val createdBy: String? = null,
     val createdAtStart: Instant? = null,
     val createdAtEnd: Instant? = null,

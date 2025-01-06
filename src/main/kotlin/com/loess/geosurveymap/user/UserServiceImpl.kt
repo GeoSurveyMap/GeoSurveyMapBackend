@@ -30,7 +30,7 @@ class UserServiceImpl(
         return userRepository.findByKindeId(kindeId) ?: throw NotFoundException("User not found")
     }
 
-    override fun updateUser(kindeId: String, permissions: List<DataPermission>): User {
+    override fun updateUser(kindeId: String, permissions: List<CountryCode>): User {
         val user = findByKindeId(kindeId)
         user.apply { this.permissions = permissions.toMutableList() }.also { userRepository.save(it) }
         return user.toResponse()

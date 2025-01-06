@@ -1,10 +1,7 @@
 package com.loess.geosurveymap.apiutils
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.loess.geosurveymap.apiutils.dto.ApiResponseErrorElement
-import com.loess.geosurveymap.exceptions.ApiException
-import com.loess.geosurveymap.exceptions.BadRequestException
-import com.loess.geosurveymap.exceptions.ConflictException
-import com.loess.geosurveymap.exceptions.NotFoundException
+import com.loess.geosurveymap.exceptions.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
@@ -86,5 +83,6 @@ fun ApiException.getHttpStatus(): HttpStatus =
         is ConflictException -> HttpStatus.CONFLICT
         is BadRequestException -> HttpStatus.BAD_REQUEST
         is NotFoundException -> HttpStatus.NOT_FOUND
+        is ForbiddenException -> HttpStatus.FORBIDDEN
         else -> HttpStatus.INTERNAL_SERVER_ERROR
     }

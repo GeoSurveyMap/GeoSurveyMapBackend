@@ -37,18 +37,18 @@ class UserController(
     }
 
     @Operation(summary = "Updates user's permissions")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @PutMapping("/update/{kindeId}")
     fun updateUserPermissions(
         @PathVariable kindeId: String,
-        @RequestParam permissions: List<DataPermission>
+        @RequestParam permissions: List<CountryCode>
     ): ApiResponse<User> =
         apiRequestHandler.handle {
             userService.updateUser(kindeId, permissions)
         }
 
     @Operation(summary = "Filter users based on various criteria")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @GetMapping("/filter")
     fun filterUsers(
         @Parameter(description = "Page number (0-based)", example = PAGEABLE_EXAMPLE)
@@ -68,7 +68,7 @@ class UserController(
         @RequestParam(required = false) email: String?,
 
         @Parameter(description = "Filter by Permissions (exact matches)")
-        @RequestParam(required = false) permissions: List<DataPermission>?,
+        @RequestParam(required = false) permissions: List<CountryCode>?,
 
         @Parameter(description = "Filter by the creator's username (supports partial, case-insensitive matches)")
         @RequestParam(required = false) createdBy: String?,
@@ -112,7 +112,7 @@ class UserController(
         kindeId: String?,
         role: Role?,
         email: String?,
-        permissions: List<DataPermission>?,
+        permissions: List<CountryCode>?,
         createdBy: String?,
         createdAtStart: Instant?,
         createdAtEnd: Instant?,

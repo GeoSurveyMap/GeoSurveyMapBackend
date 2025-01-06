@@ -5,11 +5,11 @@ data class User(
     val kindeId: String,
     val email: String,
     val status: UserStatus = UserStatus.ACTIVE,
-    val permissions: MutableList<DataPermission> = mutableListOf()
+    val permissions: MutableList<CountryCode> = mutableListOf()
 )
 
 data class UserRequest(
     val kindeId: String,
     val email: String,
-    val permissions: MutableList<DataPermission> = mutableListOf()
+    val permissions: MutableList<CountryCode> = mutableListOf()
 )

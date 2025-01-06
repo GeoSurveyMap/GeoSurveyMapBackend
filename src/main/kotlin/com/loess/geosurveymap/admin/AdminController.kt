@@ -2,6 +2,7 @@ package com.loess.geosurveymap.admin
 
 import com.loess.geosurveymap.apiutils.ApiRequestHandler
 import com.loess.geosurveymap.apiutils.dto.ApiResponse
+import com.loess.geosurveymap.config.CustomJwtGrantedAuthoritiesConverter
 import com.loess.geosurveymap.location.Filters
 import com.loess.geosurveymap.location.Location
 import com.loess.geosurveymap.location.LocationService
@@ -21,8 +22,11 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
@@ -44,11 +48,11 @@ class AdminController(
     private val locationService: LocationService,
     private val apiRequestHandler: ApiRequestHandler,
     private val surveyService: SurveyService,
-    private val userService: UserService
+    private val userService: UserService,
 ) {
 
     @Operation(summary = "Get report from collected data in xlsx format")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @GetMapping("/report")
     fun downloadReport(
         @Parameter(description = "Page number (0-based)", example = PAGEABLE_EXAMPLE)
@@ -113,10 +117,14 @@ class AdminController(
         @RequestParam(required = false) centralY: Double?,
 
         @Parameter(description = "Radius in meters for spatial filtering - works only if centralX and centralY are filled too", example = "1000.0")
-        @RequestParam(required = false) radiusInMeters: Double?,
-
-        @AuthenticationPrincipal jwt: Jwt
+        @RequestParam(required = false) radiusInMeters: Double?
     ): ResponseEntity<Resource> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val jwt = authentication.principal as Jwt
+        val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+
+        val authorities: Collection<GrantedAuthority> = authentication.authorities
+
         val filters = buildFilter(
             id,
             name,
@@ -146,12 +154,12 @@ class AdminController(
         val fileName = "survey-$formattedDate.xlsx"
 
         return apiRequestHandler.handleResource(EXCEL_TYPE, fileName) {
-            excelReportService.generateSurveyExcelReport(filters, pageable)
+            excelReportService.generateSurveyExcelReport(filters, pageable, kindeId, authorities)
         }
     }
 
     @Operation(summary = "Filter collected data")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @GetMapping("/data/filter")
     fun filterData(
         @Parameter(description = "Page number (0-based)", example = PAGEABLE_EXAMPLE)
@@ -218,6 +226,13 @@ class AdminController(
         @Parameter(description = "Radius in meters for spatial filtering - works only if centralX and centralY are filled too", example = "1000.0")
         @RequestParam(required = false) radiusInMeters: Double?
     ): ApiResponse<List<Location>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val jwt = authentication.principal as Jwt
+        val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+
+        val authorities: Collection<GrantedAuthority> = authentication.authorities
+        val userPermissions = userService.findByKindeId(kindeId).permissions
+
         val filters = buildFilter(
             id,
             name,
@@ -243,7 +258,7 @@ class AdminController(
 
 
         return apiRequestHandler.handlePage {
-            locationService.getFilteredLocations(filters, pageable)
+            locationService.getFilteredLocations(filters, pageable, kindeId, authorities, userPermissions)
         }
     }
 
@@ -296,7 +311,7 @@ class AdminController(
 
     @Operation(summary = "Accept/Reject survey")
     @PutMapping("/{surveyId}/status/{status}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     fun acceptSurvey(@PathVariable surveyId: Long, @PathVariable status: SurveyStatus) =
         apiRequestHandler.handle {
             surveyService.accept(surveyId, status)
@@ -304,7 +319,7 @@ class AdminController(
 
     @Operation(summary = "Get unaccepted surveys")
     @GetMapping("/surveys/unaccepted")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     fun getUnacceptedSurveys(
         @Parameter(description = "Page number (0-based)", example = PAGEABLE_EXAMPLE)
         @PageableDefault(sort = ["createdAt"], direction = Sort.Direction.DESC, size = 20)
@@ -316,14 +331,14 @@ class AdminController(
 
     @Operation(summary = "Delete user and all surveys he created")
     @DeleteMapping("/users/{kindeId}/delete")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     fun deleteUser(@PathVariable kindeId: String) = apiRequestHandler.handle {
         userService.deleteUser(kindeId)
     }
 
     @Operation(summary = "Ban/reactivate user account")
     @DeleteMapping("/users/{kindeId}/status/{userStatus}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     fun changeUserStatus(
         @PathVariable kindeId: String,
         @PathVariable userStatus: UserStatus

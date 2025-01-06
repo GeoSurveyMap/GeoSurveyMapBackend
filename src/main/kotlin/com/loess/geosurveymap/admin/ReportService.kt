@@ -1,7 +1,9 @@
 package com.loess.geosurveymap.admin
 
+import com.loess.geosurveymap.exceptions.ForbiddenException
 import com.loess.geosurveymap.location.Filters
 import com.loess.geosurveymap.location.LocationService
+import com.loess.geosurveymap.user.UserService
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFColor
@@ -9,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
 import org.springframework.data.domain.Pageable
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.stereotype.Service
 import java.awt.Color
 import java.io.ByteArrayOutputStream
@@ -18,17 +21,27 @@ import java.time.format.DateTimeFormatter.*
 
 
 @Service
-class ReportService(private val locationService: LocationService) {
+class ReportService(
+    private val locationService: LocationService,
+    private val userService: UserService
+) {
 
-    fun generateSurveyExcelReport(filters: Filters?, pageable: Pageable): Resource {
-        val data = locationService.getFilteredLocations(filters, pageable)
+    fun generateSurveyExcelReport(
+        filters: Filters?,
+        pageable: Pageable,
+        kindeId: String,
+        authorities: Collection<GrantedAuthority>
+    ): Resource {
+        val userPermissions = userService.findByKindeId(kindeId).permissions
+        val data = locationService.getFilteredLocations(filters, pageable, kindeId, authorities, userPermissions)
+
         val workbook = XSSFWorkbook()
         val sheet = workbook.createSheet("Surveys")
 
         val styleColumn0 = createColoredCellStyle(workbook, Color(255, 255, 204))
         val styleColumns1to4 = createColoredCellStyle(workbook, Color(204, 255, 204))
-        val styleColumns5to7 = createColoredCellStyle(workbook, Color(204, 229, 255))
-        val styleColumn8 = createColoredCellStyle(workbook, Color(255, 204, 204))
+        val styleColumns5to8 = createColoredCellStyle(workbook, Color(204, 229, 255))
+        val styleColumn9 = createColoredCellStyle(workbook, Color(255, 204, 204))
 
         val headerRow: Row = sheet.createRow(0)
         val headers = listOf("ID", "Category", "Description", "Solution", "Affected Area", "Location Name", "X", "Y", "User Email", "Created At")
@@ -67,19 +80,23 @@ class ReportService(private val locationService: LocationService) {
 
                 val locationNameCell = row.createCell(5)
                 locationNameCell.setCellValue(location.name)
-                locationNameCell.cellStyle = styleColumns5to7
+                locationNameCell.cellStyle = styleColumns5to8
 
                 val xCoordCell = row.createCell(6)
                 xCoordCell.setCellValue(x)
-                xCoordCell.cellStyle = styleColumns5to7
+                xCoordCell.cellStyle = styleColumns5to8
 
                 val yCoordCell = row.createCell(7)
                 yCoordCell.setCellValue(y)
-                yCoordCell.cellStyle = styleColumns5to7
+                yCoordCell.cellStyle = styleColumns5to8
 
-                val userEmailCell = row.createCell(8)
+                val country = row.createCell(8)
+                country.setCellValue(countryCode.fullName)
+                country.cellStyle = styleColumns5to8
+
+                val userEmailCell = row.createCell(9)
                 userEmailCell.setCellValue(survey.user.email)
-                userEmailCell.cellStyle = styleColumn8
+                userEmailCell.cellStyle = styleColumn9
 
                 val date = Instant.now()
                 val formatter = ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("UTC"))

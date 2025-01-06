@@ -2,10 +2,8 @@ package com.loess.geosurveymap.user
 
 import com.loess.geosurveymap.auditable.Auditable
 import com.loess.geosurveymap.survey.SurveyEntity
-import io.hypersistence.utils.hibernate.type.array.ListArrayType
 import jakarta.persistence.*
 import org.hibernate.annotations.NaturalId
-import org.hibernate.annotations.Type
 import org.hibernate.proxy.HibernateProxy
 
 @Entity
@@ -21,7 +19,7 @@ class UserEntity(
     val email: String,
 
     @Convert(converter = DataPermissionListConverter::class)
-    var permissions: MutableList<DataPermission> = mutableListOf(),
+    var permissions: MutableList<CountryCode> = mutableListOf(),
 
     @Enumerated(value = EnumType.STRING)
     var status: UserStatus = UserStatus.ACTIVE
