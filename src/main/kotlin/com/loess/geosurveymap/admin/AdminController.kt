@@ -331,14 +331,14 @@ class AdminController(
 
     @Operation(summary = "Delete user and all surveys he created")
     @DeleteMapping("/users/{kindeId}/delete")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     fun deleteUser(@PathVariable kindeId: String) = apiRequestHandler.handle {
         userService.deleteUser(kindeId)
     }
 
     @Operation(summary = "Ban/reactivate user account")
     @DeleteMapping("/users/{kindeId}/status/{userStatus}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     fun changeUserStatus(
         @PathVariable kindeId: String,
         @PathVariable userStatus: UserStatus

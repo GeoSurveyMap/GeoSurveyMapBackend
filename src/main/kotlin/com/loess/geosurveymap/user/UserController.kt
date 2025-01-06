@@ -37,7 +37,7 @@ class UserController(
     }
 
     @Operation(summary = "Updates user's permissions")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PutMapping("/update/{kindeId}")
     fun updateUserPermissions(
         @PathVariable kindeId: String,
