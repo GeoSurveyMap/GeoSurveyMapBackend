@@ -40,3 +40,4 @@ out/
 .kotlin
 
 application-secret.yml
+application-secret-prod.yml

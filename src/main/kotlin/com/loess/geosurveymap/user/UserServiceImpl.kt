@@ -2,6 +2,7 @@ package com.loess.geosurveymap.user
 
 import com.loess.geosurveymap.exceptions.ConflictException
 import com.loess.geosurveymap.exceptions.NotFoundException
+import com.loess.geosurveymap.kinde.KindeUserService
 import com.loess.geosurveymap.location.LocationService
 import com.loess.geosurveymap.survey.SurveyRepository
 import org.springframework.data.domain.Page
@@ -14,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val surveyRepository: SurveyRepository,
-    private val locationService: LocationService
+    private val locationService: LocationService,
+    private val kindeUserService: KindeUserService
 ): UserService {
 
     override fun registerUser(user: UserRequest): Long {
@@ -48,9 +50,12 @@ class UserServiceImpl(
                 val survey = loc.survey
                 locationService.deleteLocation(loc).also {
                     surveyRepository.delete(survey)
-                    userRepository.delete(user)
                 }
+            }.also {
+                userRepository.delete(user)
             }
+        }.also {
+            kindeUserService.deleteUser(kindeId)
         }
     }
 

@@ -4,10 +4,12 @@ spring:
   threads:
     virtual:
       enabled: true
+  profiles:
+    active: dev,secret,local
 logging:
   level:
     org.springframework.security: DEBUG
-    com.mobile.amigoapp: DEBUG
+    com.loess.geosurveymap: DEBUG
   pattern:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 springdoc:
@@ -43,14 +45,16 @@ spring:
 ---
 spring:
   config:
-    activate:
-      on-profile: default
+    import: "classpath:application-secret.yml"
   servlet:
     multipart:
       enabled: true
       file-size-threshold: 2MB
       max-file-size: 2MB
       max-request-size: 2MB
+  web:
+    resources:
+      static-locations: file:/opt/var/log
 ---
 minio:
   url: http://minio:9000
@@ -59,3 +63,11 @@ minio:
     secret: minioadmin
   bucket:
     name: surveyimages
+
+---
+kinde:
+  oauth2:
+    host: https://geosurveymapauth-development.eu.kinde.com
+    redirect:
+      url: http://localhost:8080/api/auth/kinde_callback
+    scopes: openid,email,profile
