@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres
+      - postgres:/var/lib/postgresql/data/pgdata
 
   backend:
     build:
@@ -26,7 +26,7 @@ services:
       - ./wait-for-it.sh:/wait-for-it.sh
     entrypoint: [ "./wait-for-it.sh", "postgis:5432", "--", "java", "-jar", "app.jar" ]
     depends_on:
-      - postgres:/var/lib/postgresql/data
+      - postgres
 
   minio:
     image: minio/minio
