@@ -17,7 +17,8 @@ class SurveyEntity(
     @Enumerated(EnumType.STRING)
     val category: Category,
     val description: String,
-    val solution: String,
+    val solution: String, // long solution description
+    val problemSolution: String, // short, one-phrase problem solution e.g. `More water`
     val affectedArea: Double, // radius
 
     @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE])

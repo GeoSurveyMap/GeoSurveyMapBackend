@@ -10,7 +10,8 @@ fun SurveyRequest.toEntity(user: UserEntity): SurveyEntity =
         description = description,
         solution = solution,
         affectedArea = affectedArea,
-        user = user
+        user = user,
+        problemSolution = problemSolution
     )
 
 fun SurveyEntity.toResponse(location: LocationResponse): Survey =
@@ -24,5 +25,6 @@ fun SurveyEntity.toResponse(location: LocationResponse): Survey =
         user = user.toResponse(),
         createdAt = createdAt,
         filePath = filePath,
-        status = status
+        status = status,
+        problemSolution = problemSolution
     )

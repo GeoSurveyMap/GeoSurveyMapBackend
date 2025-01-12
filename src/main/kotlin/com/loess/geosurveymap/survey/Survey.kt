@@ -10,6 +10,7 @@ data class Survey(
     val category: Category,
     val description: String,
     val solution: String,
+    val problemSolution: String,
     var location: LocationResponse,
     val affectedArea: Double,
     val user: User,
@@ -23,5 +24,6 @@ data class SurveyRequest(
     val category: Category,
     val description: String,
     val solution: String,
+    val problemSolution: String,
     val locationRequest: LocationRequest,
 )
