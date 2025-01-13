@@ -9,7 +9,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme
 import io.swagger.v3.oas.models.servers.Server
 
 const val LOCALHOST = "http://localhost:8080"
-const val PRODUCTION_SERVER = "https://geosurveymapbackend-production.up.railway.app"
+const val PRODUCTION_SERVER = "http://ec2-3-75-215-88.eu-central-1.compute.amazonaws.com:8080"
 
 @Configuration
 class OpenApiConfig {
