@@ -11,6 +11,7 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -88,6 +89,14 @@ class UserController(
         @Parameter(description = "Filter by modification date (end range)", example = "2024-04-30T15:30:00Z")
         @RequestParam(required = false) modifiedAtEnd: Instant?
     ): ApiResponse<List<User>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val jwt = authentication.principal as Jwt
+        val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+        println("****************************")
+        println("****************************")
+        println(kindeId)
+        println("****************************")
+        println("****************************")
         val filters = buildUserFilters(
             id,
             kindeId,

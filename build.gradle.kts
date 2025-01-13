@@ -60,7 +60,7 @@ dependencies {
     implementation("software.amazon.awssdk:s3:2.29.0")
     implementation("io.minio:minio:8.5.13")
     implementation("software.amazon.awssdk:apache-client:2.29.0")
-    implementation("com.kinde.spring:kinde-springboot-starter:2.0.1")
+    //implementation("com.kinde.spring:kinde-springboot-starter:2.0.1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     runtimeOnly("org.postgresql:postgresql")

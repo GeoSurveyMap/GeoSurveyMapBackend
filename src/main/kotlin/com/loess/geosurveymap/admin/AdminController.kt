@@ -52,7 +52,7 @@ class AdminController(
 ) {
 
     @Operation(summary = "Get report from collected data in xlsx format")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/report")
     fun downloadReport(
         @Parameter(description = "Page number (0-based)", example = PAGEABLE_EXAMPLE)
@@ -159,7 +159,7 @@ class AdminController(
     }
 
     @Operation(summary = "Filter collected data")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/data/filter")
     fun filterData(
         @Parameter(description = "Page number (0-based)", example = PAGEABLE_EXAMPLE)
@@ -311,7 +311,7 @@ class AdminController(
 
     @Operation(summary = "Accept/Reject survey")
     @PutMapping("/{surveyId}/status/{status}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     fun acceptSurvey(@PathVariable surveyId: Long, @PathVariable status: SurveyStatus) =
         apiRequestHandler.handle {
             surveyService.accept(surveyId, status)
@@ -319,7 +319,7 @@ class AdminController(
 
     @Operation(summary = "Get unaccepted surveys")
     @GetMapping("/surveys/unaccepted")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     fun getUnacceptedSurveys(
         @Parameter(description = "Page number (0-based)", example = PAGEABLE_EXAMPLE)
         @PageableDefault(sort = ["createdAt"], direction = Sort.Direction.DESC, size = 20)

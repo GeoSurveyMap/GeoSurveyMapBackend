@@ -13,21 +13,23 @@ import java.nio.charset.StandardCharsets
 import java.util.stream.Collectors
 
 @Service
-class KindeUserService(private val restClient: RestClient) {
+class KindeUserService(
+    //private val restClient: RestClient
+) {
 
-    @Async
-    fun deleteUser(userId: String) {
-        restClient.delete()
-            .uri { uriBuilder ->
-                uriBuilder
-                    .queryParam("id", userId)
-                    .build()
-            }
-            .retrieve()
-            .onStatus({ it.isError }) { _, response ->
-                throw HttpClientException(clientResponse(response))
-            }
-    }
+//    @Async
+//    fun deleteUser(userId: String) {
+//        restClient.delete()
+//            .uri { uriBuilder ->
+//                uriBuilder
+//                    .queryParam("id", userId)
+//                    .build()
+//            }
+//            .retrieve()
+//            .onStatus({ it.isError }) { _, response ->
+//                throw HttpClientException(clientResponse(response))
+//            }
+//    }
 
     @Throws(IOException::class)
     fun getBodyAsString(httpInputMessage: HttpInputMessage): String {

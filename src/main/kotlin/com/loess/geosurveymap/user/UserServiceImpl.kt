@@ -55,7 +55,7 @@ class UserServiceImpl(
                 userRepository.delete(user)
             }
         }.also {
-            kindeUserService.deleteUser(kindeId)
+            //kindeUserService.deleteUser(kindeId)
         }
     }
 
