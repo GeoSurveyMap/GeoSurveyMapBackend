@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -102,8 +103,10 @@ class SurveyController(
 
     @Operation(summary = "Get user surveys")
     @GetMapping("/self")
-    fun getUserSurveys(@AuthenticationPrincipal jwt: Jwt): ApiResponse<List<Survey>> =
+    fun getUserSurveys(): ApiResponse<List<Survey>> =
         apiRequestHandler.handle {
+            val authentication = SecurityContextHolder.getContext().authentication
+            val jwt = authentication.principal as Jwt
             val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
             surveyService.getUserSurveys(kindeId)
         }

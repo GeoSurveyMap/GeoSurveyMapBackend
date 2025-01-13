@@ -1,0 +1,1 @@
+alter table survey drop column problem_solution;

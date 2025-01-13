@@ -92,11 +92,6 @@ class UserController(
         val authentication = SecurityContextHolder.getContext().authentication
         val jwt = authentication.principal as Jwt
         val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
-        println("****************************")
-        println("****************************")
-        println(kindeId)
-        println("****************************")
-        println("****************************")
         val filters = buildUserFilters(
             id,
             kindeId,
