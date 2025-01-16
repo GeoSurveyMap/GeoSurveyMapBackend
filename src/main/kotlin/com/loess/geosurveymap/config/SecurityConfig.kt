@@ -50,10 +50,9 @@ class SecurityConfig(@Value("\${spring.security.oauth2.resourceserver.jwt.issuer
     fun corsConfigurationSource(): CorsConfigurationSource {
         val corsConfiguration = CorsConfiguration()
         corsConfiguration.allowedOrigins = listOf(
-            "https://geosurveymapbackend-production.up.railway.app/",
             "http://localhost:3000",
             "https://geo-survey-map-web-production.up.railway.app",
-            "http://ec2-3-75-215-88.eu-central-1.compute.amazonaws.com"
+            "https://loess.wmi.amu.edu.pl"
         )
         corsConfiguration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
         corsConfiguration.allowCredentials = true

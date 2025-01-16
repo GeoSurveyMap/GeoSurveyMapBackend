@@ -1,0 +1,8 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://geosurveymapauth.kinde.com/.well-known/jwks
+          issuer-uri: https://geosurveymapauth.kinde.com
+          jws-algorithms: RS256

@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service
 import java.awt.Color
 import java.io.ByteArrayOutputStream
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.*
 
 
@@ -99,9 +101,10 @@ class ReportService(
                 userEmailCell.cellStyle = styleColumn9
 
                 val formatter = ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("UTC"))
-                val formattedDate = formatter.format(survey.createdAt)
+                val localDateTime = LocalDateTime.ofInstant(survey.createdAt, ZoneId.of("UTC"))
+                val formattedDate = localDateTime.format(formatter)
 
-                val cell9 = row.createCell(9)
+                val cell9 = row.createCell(10)
                 cell9.setCellValue(formattedDate)
                 cell9.cellStyle = styleColumn0
             }

@@ -61,6 +61,7 @@ dependencies {
     implementation("io.minio:minio:8.5.13")
     implementation("software.amazon.awssdk:apache-client:2.29.0")
     //implementation("com.kinde.spring:kinde-springboot-starter:2.0.1")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     runtimeOnly("org.postgresql:postgresql")

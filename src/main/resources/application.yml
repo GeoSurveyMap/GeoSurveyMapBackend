@@ -5,7 +5,7 @@ spring:
     virtual:
       enabled: true
   profiles:
-    active: dev,secret,local
+    active: dev,local
 logging:
   level:
     org.springframework.security: DEBUG
