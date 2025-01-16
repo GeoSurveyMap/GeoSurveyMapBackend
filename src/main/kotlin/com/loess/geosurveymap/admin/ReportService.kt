@@ -44,7 +44,7 @@ class ReportService(
         val styleColumn9 = createColoredCellStyle(workbook, Color(255, 204, 204))
 
         val headerRow: Row = sheet.createRow(0)
-        val headers = listOf("ID", "Category", "Description", "Solution", "Affected Area", "Location Name", "X", "Y", "User Email", "Created At")
+        val headers = listOf("ID", "Category", "Description", "Solution", "Affected Area", "Location Name", "X", "Y", "Country", "User Email", "Created At")
 
         headers.forEachIndexed { index, header ->
             val cell: Cell = headerRow.createCell(index)
@@ -98,9 +98,8 @@ class ReportService(
                 userEmailCell.setCellValue(survey.user.email)
                 userEmailCell.cellStyle = styleColumn9
 
-                val date = Instant.now()
                 val formatter = ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("UTC"))
-                val formattedDate = formatter.format(date)
+                val formattedDate = formatter.format(survey.createdAt)
 
                 val cell9 = row.createCell(9)
                 cell9.setCellValue(formattedDate)

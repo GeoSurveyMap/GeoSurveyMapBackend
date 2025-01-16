@@ -32,6 +32,13 @@ class UserController(
 
     @Operation(summary = "Delete yours account")
     @DeleteMapping("/self")
+    fun getUser(@AuthenticationPrincipal jwt: Jwt): ApiResponse<User> = apiRequestHandler.handle {
+        val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+        userService.findByKindeId(kindeId).toResponse()
+    }
+
+    @Operation(summary = "Delete yours account")
+    @DeleteMapping("/self")
     fun deleteAccount(@AuthenticationPrincipal jwt: Jwt) = apiRequestHandler.handle {
         val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
         userService.deleteUser(kindeId)
