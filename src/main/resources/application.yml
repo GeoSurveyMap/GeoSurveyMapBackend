@@ -44,8 +44,6 @@ spring:
           jws-algorithms: RS256
 ---
 spring:
-  config:
-    import: "classpath:application-secret.yml"
   servlet:
     multipart:
       enabled: true

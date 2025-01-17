@@ -96,9 +96,6 @@ class UserController(
         @Parameter(description = "Filter by modification date (end range)", example = "2024-04-30T15:30:00Z")
         @RequestParam(required = false) modifiedAtEnd: Instant?
     ): ApiResponse<List<User>> {
-        val authentication = SecurityContextHolder.getContext().authentication
-        val jwt = authentication.principal as Jwt
-        val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
         val filters = buildUserFilters(
             id,
             kindeId,
