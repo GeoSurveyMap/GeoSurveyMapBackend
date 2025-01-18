@@ -54,7 +54,8 @@ class SecurityConfig(@Value("\${spring.security.oauth2.resourceserver.jwt.issuer
             "https://geo-survey-map-web-production.up.railway.app",
             "https://loess.wmi.amu.edu.pl",
             "https://geo-survey-map-web.vercel.app/map",
-            "https://geo-survey-map-web.vercel.app"
+            "https://geo-survey-map-web.vercel.app",
+            "https://www.loess-soil-map.eu"
         )
         corsConfiguration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
         corsConfiguration.allowCredentials = true

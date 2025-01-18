@@ -2,7 +2,6 @@ package com.loess.geosurveymap.admin
 
 import com.loess.geosurveymap.apiutils.ApiRequestHandler
 import com.loess.geosurveymap.apiutils.dto.ApiResponse
-import com.loess.geosurveymap.config.CustomJwtGrantedAuthoritiesConverter
 import com.loess.geosurveymap.location.Filters
 import com.loess.geosurveymap.location.Location
 import com.loess.geosurveymap.location.LocationService
@@ -23,10 +22,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
@@ -121,7 +118,7 @@ class AdminController(
     ): ResponseEntity<Resource> {
         val authentication = SecurityContextHolder.getContext().authentication
         val jwt = authentication.principal as Jwt
-        val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+        val kindeAuthId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
 
         val authorities: Collection<GrantedAuthority> = authentication.authorities
 
@@ -154,7 +151,7 @@ class AdminController(
         val fileName = "survey-$formattedDate.xlsx"
 
         return apiRequestHandler.handleResource(EXCEL_TYPE, fileName) {
-            excelReportService.generateSurveyExcelReport(filters, pageable, kindeId, authorities)
+            excelReportService.generateSurveyExcelReport(filters, pageable, kindeAuthId, authorities)
         }
     }
 
@@ -228,10 +225,10 @@ class AdminController(
     ): ApiResponse<List<Location>> {
         val authentication = SecurityContextHolder.getContext().authentication
         val jwt = authentication.principal as Jwt
-        val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+        val kindeIdAuth = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
 
         val authorities: Collection<GrantedAuthority> = authentication.authorities
-        val userPermissions = userService.findByKindeId(kindeId).permissions
+        val userPermissions = userService.findByKindeId(kindeIdAuth).permissions
 
         val filters = buildFilter(
             id,
@@ -258,7 +255,7 @@ class AdminController(
 
 
         return apiRequestHandler.handlePage {
-            locationService.getFilteredLocations(filters, pageable, kindeId, authorities, userPermissions)
+            locationService.getFilteredLocations(filters, pageable, kindeIdAuth, authorities, userPermissions)
         }
     }
 
