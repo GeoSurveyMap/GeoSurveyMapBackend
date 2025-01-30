@@ -11,6 +11,7 @@ import com.loess.geosurveymap.user.UserStatus
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -53,7 +54,16 @@ class SurveyService(
         return user
     }
 
-    fun getAllSurveys(): List<Survey> = locationService.getAllLocations().map { it.survey }
+    fun getAllSurveys(authorities: Collection<GrantedAuthority>?): List<Survey> {
+        val isNotAdmin = authorities?.none { it.authority == "ROLE_SUPER_ADMIN" || it.authority == "ROLE_ADMIN" } ?: true
+        return locationService.getAllLocations().map {
+            val survey = it.survey
+            if (isNotAdmin) {
+                survey.user.email = ""
+            }
+            survey
+        }
+    }
 
     fun getSurveysByLocation(locationRequest: Coordinates): List<Survey> =
         locationService.getLocationByCoordinates(locationRequest).map {

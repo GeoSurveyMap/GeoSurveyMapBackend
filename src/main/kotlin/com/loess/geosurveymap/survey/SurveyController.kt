@@ -4,10 +4,12 @@ import com.loess.geosurveymap.apiutils.ApiRequestHandler
 import com.loess.geosurveymap.apiutils.dto.ApiResponse
 import com.loess.geosurveymap.dto.BoundingBox
 import com.loess.geosurveymap.dto.Coordinates
+import io.minio.messages.Grant
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.jwt.Jwt
@@ -57,7 +59,13 @@ class SurveyController(
     @GetMapping("/all")
     fun getAllSurveys(): ApiResponse<List<Survey>> =
         apiRequestHandler.handle {
-            surveyService.getAllSurveys()
+            val authentication = SecurityContextHolder.getContext().authentication
+            val authorities = if (authentication !== null && authentication.authorities is Collection<GrantedAuthority>) {
+                val authorities: Collection<GrantedAuthority> = authentication.authorities
+                authorities
+            } else null
+
+            surveyService.getAllSurveys(authorities)
         }
 
     @Operation(summary = "General endpoint for getting surveys by location and optional parameters")

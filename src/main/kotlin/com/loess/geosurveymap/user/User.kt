@@ -3,7 +3,7 @@ package com.loess.geosurveymap.user
 data class User(
     val id: Long = 0,
     val kindeId: String,
-    val email: String,
+    var email: String,
     val status: UserStatus = UserStatus.ACTIVE,
     val permissions: MutableList<CountryCode> = mutableListOf()
 )
