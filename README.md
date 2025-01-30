@@ -149,6 +149,15 @@ The backend validates the **JWT token** received from the frontend. Key security
 5. **Submit a Pull Request:** Describe your changes and link any related issues.
 
 ---
+## Deployment
+
+The application
+is implemented on a Linux virtual machine provided by `Adam Mickiewicz University`. To access the VM or for more information, please contact Professor `Patrick Żywica` via e-mail `bikol@amu.edu.pl`.
+
+The application
+is deployed via a `docker-compose.yml` file located in the `/opt/loess` directory.
+Currently, the docker image is downloaded from the private docker repository of one of the developers of this projects, but on the next deployment the new image should be pushed out to another independent repository.
+---
 
 ## Setup Instructions
 
