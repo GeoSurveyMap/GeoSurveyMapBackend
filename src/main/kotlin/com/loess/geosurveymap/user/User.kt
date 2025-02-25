@@ -1,7 +1,7 @@
 package com.loess.geosurveymap.user
 
 data class User(
-    val id: Long = 0,
+    var id: Long = 0,
     var kindeId: String,
     var email: String,
     val status: UserStatus = UserStatus.ACTIVE,

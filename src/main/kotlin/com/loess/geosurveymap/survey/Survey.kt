@@ -6,7 +6,7 @@ import com.loess.geosurveymap.user.User
 import java.time.Instant
 
 data class Survey(
-    val id: Long? = null,
+    var id: Long? = null,
     val category: Category,
     val description: String,
     val solution: String? = null,
