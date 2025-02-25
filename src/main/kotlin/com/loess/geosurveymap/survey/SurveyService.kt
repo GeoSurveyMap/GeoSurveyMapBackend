@@ -59,7 +59,8 @@ class SurveyService(
         return locationService.getAllLocations().map {
             val survey = it.survey
             if (isNotAdmin) {
-                survey.user.email = ""
+                survey.user.email = "***"
+                survey.user.kindeId = "***"
             }
             survey
         }

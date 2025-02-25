@@ -29,11 +29,13 @@ class SurveyController(
     fun createSurvey(
         @RequestBody surveyRequest: SurveyRequest,
         @RequestParam("filePath", required = false) filePath: String? = null,
-        @AuthenticationPrincipal jwt: Jwt
     ): ApiResponse<Survey> =
         apiRequestHandler.handle {
-            val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
-            surveyService.saveSurvey(surveyRequest, kindeId, filePath)
+            val authentication = SecurityContextHolder.getContext().authentication
+            val jwt = authentication.principal as Jwt
+            val kindeAuthId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+
+            surveyService.saveSurvey(surveyRequest, kindeAuthId, filePath)
         }
 
     @Operation(summary = "Uploads survey file", security = [SecurityRequirement(name = "bearerAuth")])
@@ -48,11 +50,13 @@ class SurveyController(
     )
     fun uploadFile(
         @RequestPart("file") file: MultipartFile,
-        @AuthenticationPrincipal jwt: Jwt
     ): ApiResponse<String> =
         apiRequestHandler.handle {
-            val kindeId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
-            surveyService.uploadFile(file, kindeId)
+            val authentication = SecurityContextHolder.getContext().authentication
+            val jwt = authentication.principal as Jwt
+            val kindeAuthId = jwt.subject ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "User ID not found in token")
+
+            surveyService.uploadFile(file, kindeAuthId)
         }
 
     @Operation(summary = "Get all existing surveys")
