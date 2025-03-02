@@ -35,6 +35,7 @@ class SecurityConfig(@Value("\${spring.security.oauth2.resourceserver.jwt.issuer
             .authorizeHttpRequests {
                 it.requestMatchers("/api/v1/survey/create","/api/v1/survey/upload").authenticated()
                 it.requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                it.requestMatchers("/swagger-ui/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
                 it.anyRequest().permitAll()
             }
             .oauth2ResourceServer {
