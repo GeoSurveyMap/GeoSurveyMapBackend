@@ -61,8 +61,6 @@ class SurveyService(
             if (isNotAdmin) {
                 // TODO: this is just a quick fix to not display this data to all users in a `/all` request.
                 // Think of a new DTO or split the request into two versions - one for the admin and one for “regular” users.
-                survey.id = 0L
-                survey.user.id = 0L
                 survey.user.email = "***"
                 survey.user.kindeId = "***"
             }

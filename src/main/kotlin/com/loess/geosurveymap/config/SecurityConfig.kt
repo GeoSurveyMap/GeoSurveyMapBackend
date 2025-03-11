@@ -30,7 +30,6 @@ class SecurityConfig(@Value("\${spring.security.oauth2.resourceserver.jwt.issuer
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         return http
-            .csrf { it.disable() }
             .cors { corsConfigurationSource() }
             .authorizeHttpRequests {
                 it.requestMatchers("/api/v1/survey/create","/api/v1/survey/upload").authenticated()
