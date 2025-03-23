@@ -72,7 +72,7 @@ class SurveyController(
             surveyService.getAllSurveys(authorities)
         }
 
-    @Operation(summary = "General endpoint for getting surveys by location and optional parameters")
+    @Operation(summary = "Get surveys by location and optional parameters")
     @GetMapping
     fun getSurveys(
         @RequestParam(required = true) x: Double,
